@@ -1,0 +1,7 @@
+<div class="card shadow border-0" style="width: 18rem;">
+    <div class="card-body">
+        <h2>{{trip.title}}</h2>
+        <p class="card-text">{{trip.description}}</p>
+        <a [routerLink]="['/trips', trip.id]" class="btn btn-primary">Détails</a>
+    </div>
+</div>

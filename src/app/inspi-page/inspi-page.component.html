@@ -1,0 +1,17 @@
+<app-nav-element></app-nav-element>
+<div class="container-fluid" style="background-color: white; margin-top:200px">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <h1 class="display-1 fw-bold" style="margin-top:-60px;">Inspiration voyage</h1>
+            </div>
+        </div>
+        <div class="col-12">
+            <ul *ngIf="trips" class="d-flex flex-wrap gap-4 mt-5" style="list-style:none;">
+                <li *ngFor="let trip of trips">
+                    <app-trip-card [trip]="trip"></app-trip-card>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

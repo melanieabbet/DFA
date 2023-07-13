@@ -1,0 +1,23 @@
+<app-nav-element></app-nav-element>
+<div *ngIf="trip" class="container">
+    <div class="row">
+        <h1 class="col-12 text-center my-5"> {{ trip.title }}</h1>
+        <ul class="col-12 d-flex" style="list-style:none;">
+            <li class="mx-2"><span>{{ formatDate(trip.createdAt) }} </span></li>
+            <li class="mx-2"><span>Lieu enregistré:</span><span class="badge bg-secondary mx-2">{{ trip.placesCount }}</span></li>
+            <li class="mx-2"><span>{{ trip.userId }}</span></li>
+        </ul>
+        <p class="col-12 text-center my-5">{{ trip.description }}</p>
+    </div>
+    <div *ngIf="tripOwnedByUser">
+        <button>Ajouter un lieu</button>
+    </div>
+    <div *ngIf="trip" class="row">
+        <ul class="d-flex gap-4" style="list-style:none;">
+            <li *ngFor="let place of places">
+                <app-place-card [place]="place"></app-place-card>
+            </li>
+        </ul>
+    </div>
+</div>
+

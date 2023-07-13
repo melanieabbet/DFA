@@ -1,0 +1,23 @@
+<form #tripForm="ngForm" (submit)="onSubmit(tripForm)">
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="tripname" class="form-label">Nom du voyage</label>
+      <input type="text" name="tripname" class="form-control" id="tripname" #tripNameField="ngModel" required [(ngModel)]="newTrip.title" minlength="3">
+      <p class="position-absolute small m-1 text-danger" *ngIf="tripNameField.invalid && (tripNameField.touched || formSubmitted)">
+        Un nom de minimum 3 charactères est obligatoire
+      </p>
+      <p class="position-absolute small m-1 text-danger">{{ errorMessage }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="tripdesc" class="form-label">Description du voyage</label>
+      <input type="text" name="tripdesc" class="form-control" id="tripdesc" #tripDescField="ngModel" required [(ngModel)]="newTrip.description" minlength="5">
+      <p class="position-absolute small m-1 text-danger" *ngIf="tripDescField.invalid && (tripDescField.touched || formSubmitted)">
+        Une description de minimum 5 charactères est obligatoire
+      </p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary">Annuler</button>
+    <button type="submit" class="btn btn-primary">Valider</button>
+  </div>
+</form>

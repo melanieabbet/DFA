@@ -1,0 +1,51 @@
+<div class="container-fluid bg-light" style="min-height:100vh;">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h1 class="h1 text-center text-primary mt-5 mb-4">Travely</h1>
+      <h2 class="h5 text-center">Créez un compte pour publier et partager vos voyages autour du monde</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <form class="mt-4 d-flex flex-wrap gap-3 align-items-end justify-content-center" #loginForm="ngForm" (submit)="onSubmit(loginForm)">
+        <div>
+          <label for="username" class="form-label m-1">Identifiant</label>
+          <input 
+            class="form-control"
+            type="text"
+            name="username"
+            id="username"
+            #usernameField="ngModel"
+            required
+            [(ngModel)]="authRequest.username"
+          />
+          <p class="position-absolute small m-1 text-danger" *ngIf="usernameField.hasError('required') && usernameField.touched">
+            Identifiant obligatoire
+          </p>
+        </div>
+        <div>
+          <label for="password" class="form-label m-1">Mot de passe</label>
+          <input
+            class="form-control"
+            type="password"
+            name="password"
+            id="passwrod"
+            #passwordField="ngModel"
+            required
+            [(ngModel)]="authRequest.password"
+          />
+          <p class="position-absolute small m-1 text-danger" *ngIf="passwordField.hasError('required') && passwordField.touched">
+          Mot de passe obligatoire
+          </p>
+        </div>
+        <div>
+          <button class="btn btn-primary" type="submit" [disabled]="loginForm.invalid">Se connecter</button>
+            <p *ngIf="loginError">
+              Unable to log in. See the log for more information.
+            </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
