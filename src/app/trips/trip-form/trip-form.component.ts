@@ -1,80 +1,50 @@
-import { Component, OnInit} from '@angular/core';
-import { TripService } from '../trip.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Trip, TripRequest } from '../trip.model';
-import { NgForm } from "@angular/forms";
-declare var bootstrap: any; // Ajoutez cette ligne
-
+import { TripService } from '../trip.service';
 
 @Component({
   selector: 'app-trip-form',
   templateUrl: './trip-form.component.html',
-  styleUrls: ['./trip-form.component.scss']
+  styleUrls: ['./trip-form.component.scss'],
 })
 export class TripFormComponent implements OnInit {
-  trips?: Trip[];
-  newTrip: TripRequest = {
-    title: '',
-    description: ''
-  };
+  // trips?: Trip[];
+  // newTrip: TripRequest = {
+  //   title: '',
+  //   description: '',
+  // };
   formError: boolean;
-  formSubmitted: boolean;
-  errorMessage: string;
-  formModal: any;
+  tripForm: FormGroup;
 
-  constructor(private tripService: TripService) {
+  // @Input() trip?: Trip;
+  @Output() submitted = new EventEmitter<TripRequest>();
+
+  constructor(
+    // private tripService: TripService,
+    readonly modalRef: BsModalRef,
+    formBuilder: FormBuilder
+  ) {
     this.formError = false;
-    this.formSubmitted = false;
-    this.errorMessage = '';
-  }
-  ngOnInit(){
-    this.formModal = new bootstrap.Modal( 
-    document.getElementById('myModal')
-    );
+    this.tripForm = formBuilder.group({
+      title: formBuilder.control('', [
+        Validators.minLength(3),
+        Validators.required,
+      ]), description: formBuilder.control('',[ Validators.minLength(5), Validators.required])
+    });
   }
 
-  onSubmit(form: NgForm) {
-    // Mark the form as submitted
-    this.formSubmitted = true;
-    this.errorMessage = '';
-    // Check if the form is valid
-    if (form.valid) {
-      this.formError = false;
-      this.tripService.checkTripNameExists(this.newTrip.title).subscribe(
-        exists => {
-          if (exists) {
-            this.errorMessage = 'Ce nom de voyage existe déjà.';
-          } else {
-            this.addTrip();
-          }
-        },
-        error => {
-          this.errorMessage = 'Erreur lors de la vérification du nom du voyage.';
-        }
-      );
+  ngOnInit(): void {
+    // If trip is defined, set its value as the form input's value
+    //this.tripForm.patchValue({})
+  }
+  onSubmit(){
+    if (this.tripForm.valid) {
+      const formData = this.tripForm.value;
+      this.submitted.emit(formData);
     } else {
       this.formError = true;
     }
   }
-
-  addTrip() {
-    this.tripService.postTrip(this.newTrip).subscribe(
-      trips => {
-        this.resetForm(); // Reset the form
-        this.formModal.hide();
-      },
-      error => {
-        this.errorMessage = 'Erreur lors de l\'ajout du voyage.';
-      }
-    );
-
-  }
-  resetForm(){
-    this.newTrip = {
-      title: '',
-      description: ''
-    };
-  }
-  closeForm() {
-    this.formModal.hide();
-  }
-}
+ }

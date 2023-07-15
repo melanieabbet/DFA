@@ -13,7 +13,7 @@ import { DatePipe } from '@angular/common';
   selector: 'app-trip-page',
   templateUrl: './trip-page.component.html',
   styleUrls: ['./trip-page.component.scss'],
-  providers: [DatePipe]
+  providers: [DatePipe],
 })
 export class TripPageComponent {
   tripId?: string;
@@ -33,19 +33,6 @@ export class TripPageComponent {
         throw TypeError('Trip ID does not exist');
       }
       this.tripId = params.get('id') as string;
-      // this.tripService.getTrip(this.tripId).subscribe((trip) => {
-      //   this.trip = trip;
-      // });
-      // this.placeService
-      //   .getThisTripPlaces(this.tripId)
-      //   .subscribe((places) => (this.places = places));
-      // this.auth
-      //   .getUser$()
-      //   .pipe(
-      //     filter((user) => user !== undefined),
-      //     first()
-      //   )
-      //   .subscribe((user) => {});
 
       // Execute if all observable are completed
       forkJoin([
@@ -62,13 +49,31 @@ export class TripPageComponent {
         this.places = places;
         this.tripOwnedByUser = user.id === trip.userId;
       });
-
     });
   }
   formatDate(date: string): string {
     const dateObj = new Date(date);
     return this.datePipe.transform(dateObj, 'yyyy-MM-dd') || '';
   }
+
+  showEditForm(): void {
+    if (isDefined(this.trip)) {
+      // this.bsModalService.show(EditTripModalComponent, {
+      //   initialState: { trip },
+      // });
+    }
+  }
+  delete(): void {
+    if (isDefined(this.tripId)) {
+      this.tripService.deleteTrip(this.tripId).subscribe({
+        next: (deletedTrip: Trip) => {
+          // Suppression réussie, effectuez les actions nécessaires
+          console.log('Le voyage a été supprimé :', deletedTrip);
+          // Par exemple, redirigez l'utilisateur vers une autre page
+          // ou mettez à jour la liste des voyages dans votre composant parent
+        }, error: () => { alert('Une erreur s\'est produite lors de la suppression du voyage :');}
+      }
+      );
+    }
+  }
 }
-
-

@@ -1,8 +1,15 @@
 <app-nav-element></app-nav-element>
 <div *ngIf="trip" class="container">
     <div class="row">
-        <h1 class="col-12 text-center my-5"> {{ trip.title }}</h1>
-        <ul class="col-12 d-flex" style="list-style:none;">
+        <div class="d-flex col-12 align-items-center justify-content-center">
+            <h1 class="text-center my-5"> {{ trip.title }}</h1>
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary  ms-3">Editer</button>
+                <button type="button" class="btn btn-primary  ms-3" (click)="delete()">Supprimer</button>
+            </div>
+        </div>
+       
+        <ul class="col-12 d-flex justify-content-center" style="list-style:none;">
             <li class="mx-2"><span>{{ formatDate(trip.createdAt) }} </span></li>
             <li class="mx-2"><span>Lieu enregistré:</span><span class="badge bg-secondary mx-2">{{ trip.placesCount }}</span></li>
             <li class="mx-2"><span>{{ trip.userId }}</span></li>

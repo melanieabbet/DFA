@@ -43,11 +43,14 @@ export class TripService {
     return this.http.post<Trip[]>(`${environment.apiUrl}/trips`,newTrip);
   }
 
-  checkTripNameExists(tripName: string): Observable<boolean> {
-    return this.http.get<Trip[]>(`${environment.apiUrl}/trips?title=${tripName}`).pipe(
+  checkTripNameExists(tripTitle: string): Observable<boolean> {
+    return this.http.get<Trip[]>(`${environment.apiUrl}/trips?title=${tripTitle}`).pipe(
       map((trips: Trip[]) => trips.length > 0)
     );
   }
 
+  deleteTrip(id: string): Observable<Trip> {
+    return this.http.delete<Trip>(`${environment.apiUrl}/trips/${id}`);
+  }
 
 }

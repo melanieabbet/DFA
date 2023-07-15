@@ -18,6 +18,7 @@ import { PlaceFormComponent } from './places/place-form/place-form.component';
 import { TripCardComponent } from './trips/trip-card/trip-card.component';
 import { TripFormComponent } from './trips/trip-form/trip-form.component';
 import { TripPageComponent } from './trips/trip-page/trip-page.component';
+import { NewTripModalComponent } from './trips/new-trip-modal/new-trip-modal.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { TripPageComponent } from './trips/trip-page/trip-page.component';
     PlaceCardComponent,
     PlaceFormComponent,
     TripFormComponent,
+    NewTripModalComponent,
   ],
   imports: [
     FormsModule,
@@ -40,7 +42,7 @@ import { TripPageComponent } from './trips/trip-page/trip-page.component';
     HttpClientModule,
     AuthModule,
     BrowserAnimationsModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
   ],
   providers: [
     {

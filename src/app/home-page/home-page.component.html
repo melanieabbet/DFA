@@ -7,7 +7,7 @@
         style="margin-top: -60px"
       >
         <h1 class="display-1 fw-bold">Mes voyages</h1>
-        <button type="button" class="btn btn-primary" (click)="openFormModal(tripFormTemplate)">
+        <button type="button" class="btn btn-primary" (click)="openFormModal()">
           Nouveau voyage
         </button>
       </div>
@@ -25,16 +25,3 @@
     </div>
   </div>
 </div>
-
-<ng-template #tripFormTemplate>
-  <div class="modal-header">
-    <h5 class="modal-title" id="newTripModal">Créez votre prochain voyage</h5>
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="modal"
-      aria-label="Close"
-    ></button>
-  </div>
-  <app-trip-form></app-trip-form>
-</ng-template>
