@@ -7,5 +7,16 @@ export type Place = {
     }
     tripHref: string;
     tripId: string;
-    pictureUrl: String;
+    pictureUrl: string;
+  };
+
+export type PlaceRequest = {
+    name: string;
+    description: string;
+    location?:{
+        type: string,
+        coordinates: [number, number],
+    }
+    tripId: string;
+    pictureUrl?: string;
   };

@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="newTripModal">Modifier le voyage</h5>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+      (click)="modalRef.hide()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-trip-form #tripForm [tripData]="tripData" [tripId]="tripId" (submitted)="editNewTrip($event)"></app-trip-form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">
+      Annuler
+    </button>
+    <button type="submit" class="btn btn-primary" (click)="tripForm.onSubmit()">Valider</button>
+  </div>
+  

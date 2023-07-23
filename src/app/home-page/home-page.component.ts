@@ -36,7 +36,6 @@ export class HomePageComponent implements OnInit {
         console.log("MAJ")
       });
     }
-    // passez en paramètre objet initialstate?! jsp ce ke ct
   }
   
 }

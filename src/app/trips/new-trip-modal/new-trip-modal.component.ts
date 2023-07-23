@@ -9,7 +9,7 @@ import { TripService } from '../trip.service';
   styleUrls: ['./new-trip-modal.component.scss'],
 })
 export class NewTripModalComponent {
-  @Output() tripAdded = new EventEmitter<boolean>();
+  //@Output() tripAdded = new EventEmitter<boolean>();
   constructor(readonly modalRef: BsModalRef, private tripService: TripService,) {
 
   }
@@ -19,7 +19,7 @@ export class NewTripModalComponent {
 
     this.tripService.checkTripNameExists(tripData.title).subscribe((exists: boolean) => {
       if (exists) {
-        alert("Ce voyage existe déjà, veuillez choisir un autre nom")
+        alert("Ce voyage existe déjà, veuillez choisir un autre nom");
       } else {
         this.tripService.postTrip(tripData).subscribe({
           next: (trips) =>{
@@ -27,7 +27,7 @@ export class NewTripModalComponent {
               //fermez la modale
               this.modalRef.hide();
               // Une fois l'ajout terminé avec succès, émettre un événement indiquant qu'un nouveau voyage a été ajouté
-               this.tripAdded.emit(true);
+              // this.tripAdded.emit(true);
             }
           }, error: () => {
             alert("Erreur lors de l'ajout du voyage");

@@ -18,11 +18,11 @@ export class TripFormComponent implements OnInit {
   formError: boolean;
   tripForm: FormGroup;
 
-  // @Input() trip?: Trip;
+  @Input() tripData!: TripRequest;
+  @Input() tripId!: string;
   @Output() submitted = new EventEmitter<TripRequest>();
 
   constructor(
-    // private tripService: TripService,
     readonly modalRef: BsModalRef,
     formBuilder: FormBuilder
   ) {
@@ -37,7 +37,12 @@ export class TripFormComponent implements OnInit {
 
   ngOnInit(): void {
     // If trip is defined, set its value as the form input's value
-    //this.tripForm.patchValue({})
+    if (this.tripData) {
+      this.tripForm.patchValue({
+        title: this.tripData.title,
+        description: this.tripData.description,
+      });
+    }
   }
   onSubmit(){
     if (this.tripForm.valid) {

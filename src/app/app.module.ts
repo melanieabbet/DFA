@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ApiTokenInterceptorService } from "./auth/api-token-interceptor.service";
 import { AuthModule } from "./auth/auth.module";
 import { DummyPageComponent } from './dummy-page/dummy-page.component';
@@ -19,6 +20,8 @@ import { TripCardComponent } from './trips/trip-card/trip-card.component';
 import { TripFormComponent } from './trips/trip-form/trip-form.component';
 import { TripPageComponent } from './trips/trip-page/trip-page.component';
 import { NewTripModalComponent } from './trips/new-trip-modal/new-trip-modal.component';
+import { EditTripModalComponent } from './trips/edit-trip-modal/edit-trip-modal.component';
+import { NewPlaceModalComponent } from './places/new-place-modal/new-place-modal.component';
 
 
 @NgModule({
@@ -34,6 +37,8 @@ import { NewTripModalComponent } from './trips/new-trip-modal/new-trip-modal.com
     PlaceFormComponent,
     TripFormComponent,
     NewTripModalComponent,
+    EditTripModalComponent,
+    NewPlaceModalComponent,
   ],
   imports: [
     FormsModule,
@@ -43,6 +48,7 @@ import { NewTripModalComponent } from './trips/new-trip-modal/new-trip-modal.com
     AuthModule,
     BrowserAnimationsModule,
     ModalModule.forRoot(),
+    AccordionModule.forRoot(),
   ],
   providers: [
     {

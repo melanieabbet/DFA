@@ -6,7 +6,10 @@
 @import "../node_modules/ngx-bootstrap/datepicker/bs-datepicker";
 
 /* Importing Bootstrap SCSS file. */
-@import "./node_modules/bootstrap/scss/bootstrap";
+ @import "./node_modules/bootstrap/scss/bootstrap";
 
 /* Importing Datepicker SCSS file. */
 @import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+
+/* Importing Bootstrap Icon SCSS file. */
+@import "~bootstrap-icons/font/bootstrap-icons.css";

@@ -1,30 +1,28 @@
 <app-nav-element></app-nav-element>
-<div *ngIf="trip" class="container">
+<div *ngIf="trip" class="container-fluid bg-white" style="margin-top: 120px;">
     <div class="row">
-        <div class="d-flex col-12 align-items-center justify-content-center">
-            <h1 class="text-center my-5"> {{ trip.title }}</h1>
+        <div class="d-flex col-12 align-items-center justify-content-center" style="margin-top: -100px;">
+            <h1 class="text-center my-5 display-3 fw-bold" > {{ trip.title }}</h1>
             <div class="d-flex">
-                <button type="button" class="btn btn-primary  ms-3">Editer</button>
+                <button type="button" class="btn btn-primary  ms-3" (click)="showEditModal()">Editer</button>
                 <button type="button" class="btn btn-primary  ms-3" (click)="delete()">Supprimer</button>
             </div>
         </div>
        
         <ul class="col-12 d-flex justify-content-center" style="list-style:none;">
-            <li class="mx-2"><span>{{ formatDate(trip.createdAt) }} </span></li>
-            <li class="mx-2"><span>Lieu enregistré:</span><span class="badge bg-secondary mx-2">{{ trip.placesCount }}</span></li>
-            <li class="mx-2"><span>{{ trip.userId }}</span></li>
+            <li class="mx-3"><i class="bi bi-calendar me-2 text-primary"></i><span class="fw-bold">{{ formatDate(trip.createdAt) }}</span></li>
+            <li class="mx-3"><i class="bi bi-pin-map-fill me-2 text-primary"></i><span class="fw-bold">{{ trip.placesCount }}</span></li>
+            <li class="mx-3"><i class="bi bi-person-fill me-2 text-primary"></i><span  class="fw-bold">{{ trip.userId }}</span></li>
         </ul>
-        <p class="col-12 text-center my-5">{{ trip.description }}</p>
+        <p class="col-12 text-center my-3">{{ trip.description }}</p>
     </div>
     <div *ngIf="tripOwnedByUser">
-        <button>Ajouter un lieu</button>
+        <button class="btn btn-primary  ms-3" (click)="showAddPlaceModal()">Ajouter un lieu</button>
     </div>
     <div *ngIf="trip" class="row">
-        <ul class="d-flex gap-4" style="list-style:none;">
-            <li *ngFor="let place of places">
-                <app-place-card [place]="place"></app-place-card>
-            </li>
-        </ul>
+        <accordion [isAnimated]="true" class="col-6" *ngFor="let place of places">
+            <app-place-card [place]="place"></app-place-card>
+        </accordion>
     </div>
 </div>
 

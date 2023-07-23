@@ -8,6 +8,11 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { filter, first, forkJoin } from 'rxjs';
 import { isDefined } from 'src/app/utils';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { EditTripModalComponent } from '../edit-trip-modal/edit-trip-modal.component';
+import { TripRequest } from '../trip.model';
+import { NewPlaceModalComponent } from 'src/app/places/new-place-modal/new-place-modal.component';
 
 @Component({
   selector: 'app-trip-page',
@@ -20,13 +25,16 @@ export class TripPageComponent {
   places?: Place[];
   tripOwnedByUser = false;
   @Input({ required: true }) trip?: Trip;
+  formModal: any;
 
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
     private placeService: PlaceService,
     private auth: AuthService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private router: Router,
+    private bsModalService: BsModalService
   ) {
     this.route.paramMap.subscribe((params: ParamMap) => {
       if (!params.has('id')) {
@@ -56,12 +64,18 @@ export class TripPageComponent {
     return this.datePipe.transform(dateObj, 'yyyy-MM-dd') || '';
   }
 
-  showEditForm(): void {
-    if (isDefined(this.trip)) {
-      // this.bsModalService.show(EditTripModalComponent, {
-      //   initialState: { trip },
-      // });
-    }
+  showEditModal(): void {
+      if (isDefined(this.trip)) {
+        this.formModal = this.bsModalService.show(EditTripModalComponent, {
+          initialState: {tripData: this.trip , tripId: this.tripId },
+        });
+        if (this.formModal) {
+          this.formModal.onHidden.subscribe(() => {
+            this.loadTrip();
+            console.log("MAJ")
+          });
+        }
+      }
   }
   delete(): void {
     if (isDefined(this.tripId)) {
@@ -69,11 +83,35 @@ export class TripPageComponent {
         next: (deletedTrip: Trip) => {
           // Suppression réussie, effectuez les actions nécessaires
           console.log('Le voyage a été supprimé :', deletedTrip);
-          // Par exemple, redirigez l'utilisateur vers une autre page
+          // Redirigez l'utilisateur vers une autre page
+          this.router.navigate(['/home']);
           // ou mettez à jour la liste des voyages dans votre composant parent
         }, error: () => { alert('Une erreur s\'est produite lors de la suppression du voyage :');}
       }
       );
+    }
+  }
+  loadTrip(): void{
+    if(this.tripId){
+      this.tripService.getTrip(this.tripId).subscribe((trip) => {this.trip = trip;});
+    };
+  }
+  loadPlace(): void{
+    if(this.tripId){
+      this.placeService.getThisTripPlaces(this.tripId).subscribe((places)=> {this.places = places;})
+    };
+    //améliorer pour ne mettre a jour que la nouvelle place
+  }
+
+  showAddPlaceModal(): void {
+    this.formModal = this.bsModalService.show(NewPlaceModalComponent, {
+      initialState: { tripId: this.tripId },
+    });
+    if (this.formModal) {
+      this.formModal.onHidden.subscribe(() => {
+        this.loadPlace();
+        console.log("MAJ")
+      });
     }
   }
 }

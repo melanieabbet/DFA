@@ -1,11 +1,35 @@
-<form>
+<form [formGroup]="placeForm">
     <div class="mb-3">
-        <label for="titleLieu" class="form-label">Nom du lieu</label>
-        <input type="text" class="form-control" id="title">
+      <label for="placename" class="form-label">Nom du lieu</label>
+      <input
+        type="text"
+        name="placename"
+        class="form-control"
+        id="placename"
+        formControlName="name"
+      />
+      <p
+        class="position-absolute small m-1 text-danger"
+        *ngIf="placeForm.get('name')?.invalid && (placeForm.get('name')?.touched)"
+      >
+        Un nom de minimum 3 charactères est obligatoire
+      </p>
     </div>
     <div class="mb-3">
-        <label for="descriptionLieu" class="form-label">Description du lieu</label>
-        <input type="text" class="form-control" id="title">
+      <label for="placedesc" class="form-label">Description du lieu</label>
+      <input
+        type="text"
+        name="placedesc"
+        class="form-control"
+        id="placedesc"
+        formControlName="description"
+      />
+      <p
+        class="position-absolute small m-1 text-danger"
+        *ngIf="placeForm.get('description')?.invalid && (placeForm.get('description')?.touched)"
+      >
+        Une description de minimum 5 charactères est obligatoire
+      </p>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+  </form>
+  
