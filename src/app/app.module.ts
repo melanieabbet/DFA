@@ -22,6 +22,8 @@ import { TripPageComponent } from './trips/trip-page/trip-page.component';
 import { NewTripModalComponent } from './trips/new-trip-modal/new-trip-modal.component';
 import { EditTripModalComponent } from './trips/edit-trip-modal/edit-trip-modal.component';
 import { NewPlaceModalComponent } from './places/new-place-modal/new-place-modal.component';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { MapComponent } from './places/map/map.component';
 
 
 @NgModule({
@@ -39,6 +41,7 @@ import { NewPlaceModalComponent } from './places/new-place-modal/new-place-modal
     NewTripModalComponent,
     EditTripModalComponent,
     NewPlaceModalComponent,
+    MapComponent,
   ],
   imports: [
     FormsModule,
@@ -49,6 +52,7 @@ import { NewPlaceModalComponent } from './places/new-place-modal/new-place-modal
     BrowserAnimationsModule,
     ModalModule.forRoot(),
     AccordionModule.forRoot(),
+    LeafletModule
   ],
   providers: [
     {
