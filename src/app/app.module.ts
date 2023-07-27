@@ -24,6 +24,9 @@ import { EditTripModalComponent } from './trips/edit-trip-modal/edit-trip-modal.
 import { NewPlaceModalComponent } from './places/new-place-modal/new-place-modal.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { MapComponent } from './places/map/map.component';
+import { MapPopupComponent } from './places/map-popup/map-popup.component';
+
+
 
 
 @NgModule({
@@ -42,6 +45,7 @@ import { MapComponent } from './places/map/map.component';
     EditTripModalComponent,
     NewPlaceModalComponent,
     MapComponent,
+    MapPopupComponent
   ],
   imports: [
     FormsModule,
