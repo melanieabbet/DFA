@@ -27,6 +27,19 @@ export class PlaceService {
       })
     );
   }
+  getCurrentUserPlacesById(tripId: string): Observable<Place[]> {
+    return this.authService.getUser$().pipe(
+      switchMap((user) => {
+        if (user) {
+          const userId = user.id;
+          return this.http.get<Place[]>(`${environment.apiUrl}/places?user=${userId}&trip=${tripId}`);
+        } else {
+          // Handle the case where no user is authenticated
+          return of([]);
+        }
+      })
+    );
+  }
   getThisTripPlaces(tripId: string):  Observable<Place[]>{
     return this.http.get<Place[]>(`${environment.apiUrl}/places?trip=${tripId}`);
   }
@@ -40,3 +53,4 @@ export class PlaceService {
   }
 
 }
+export { Place };

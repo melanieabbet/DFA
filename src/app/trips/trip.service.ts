@@ -9,8 +9,6 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class TripService {
-
-
   constructor(
     private http: HttpClient,
     private authService: AuthService,

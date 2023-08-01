@@ -1,7 +1,12 @@
-<div
-  class="map"
-  leaflet
-  [leafletOptions]="mapOptions"
-  [leafletLayers]="mapMarkers"
-  (leafletMapReady)="onMapReady($event)"
-></div>
+<!-- map.component.html -->
+<div class="filter-container">
+  <label for="tripSelect">Filtrer par voyage:</label>
+  <select id="tripSelect" [(ngModel)]="selectedTripId" (change)="onTripSelectionChange()">
+    <option value="">Tous les voyages</option>
+    <option *ngFor="let trip of trips" [value]="trip.id">{{ trip.title }}</option>
+  </select>
+  <label for="search">Filtrer par voyage:</label>
+  <input id="search" type="text" [(ngModel)]="searchText" (keyup)="onSearchTextChanged()">
+</div>
+
+<div class="map" leaflet [leafletOptions]="mapOptions" [leafletLayers]="mapMarkers" (leafletMapReady)="onMapReady($event)"></div>

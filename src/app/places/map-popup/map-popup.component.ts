@@ -8,5 +8,5 @@ import { Component, Input } from '@angular/core';
 export class MapPopupComponent {
   @Input() title!: string;
   @Input() description!: string;
-  @Input() photo!: string | null;
+ // @Input() photo!: string | null;
 }
