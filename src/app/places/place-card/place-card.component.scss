@@ -1,13 +1,19 @@
 accordion-group::ng-deep div {
-        &>div.panel-heading.card-header.panel-enabled {
-          background-color: #bedfff; // change the background of every accordion heading
-  
-          .btn-link {
-            text-decoration: none;
-          }
-        }
-  
-        &>div.panel-collapse.collapse.in.show>div {
-          background-color: hsla(210, 10%, 83%, 0.10); // change the expanded content style
-        }
+  border: none;
+  &>div.panel-heading.card-header.panel-enabled {
+    background-color: #ffffff; // change the background of every accordion heading
+    border-bottom:1px solid rgb(123, 123, 123);
+    .btn-link {
+      text-decoration: none;
+      color: rgb(51, 51, 51);
+    }
+  }
+
+  &>div.panel-collapse.collapse.in.show>div {
+    background-color: hsla(210, 10%, 83%, 0.10); // change the expanded content style
+  }
+}
+
+.placeimg{
+  max-width: 100%;
 }

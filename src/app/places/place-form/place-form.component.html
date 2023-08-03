@@ -1,35 +1,63 @@
 <form [formGroup]="placeForm">
-    <div class="mb-3">
-      <label for="placename" class="form-label">Nom du lieu</label>
-      <input
-        type="text"
-        name="placename"
-        class="form-control"
-        id="placename"
-        formControlName="name"
-      />
-      <p
-        class="position-absolute small m-1 text-danger"
-        *ngIf="placeForm.get('name')?.invalid && (placeForm.get('name')?.touched)"
-      >
-        Un nom de minimum 3 charactères est obligatoire
-      </p>
-    </div>
-    <div class="mb-3">
-      <label for="placedesc" class="form-label">Description du lieu</label>
-      <input
-        type="text"
-        name="placedesc"
-        class="form-control"
-        id="placedesc"
-        formControlName="description"
-      />
-      <p
-        class="position-absolute small m-1 text-danger"
-        *ngIf="placeForm.get('description')?.invalid && (placeForm.get('description')?.touched)"
-      >
-        Une description de minimum 5 charactères est obligatoire
-      </p>
-    </div>
-  </form>
+
+  <div class="mb-3">
+    <label for="placename" class="form-label required">Nom du lieu</label>
+    <input
+      type="text"
+      name="placename"
+      class="form-control"
+      id="placename"
+      formControlName="name"
+    />
+    <p
+      class="position-relative small m-1 text-danger"
+      *ngIf="formError && placeForm.get('name')?.invalid || (placeForm.get('name')?.invalid && (placeForm.get('name')?.touched))"
+    >
+      Choisissez un nom de minimum 3 charactères
+    </p>
+  </div>
+  <div class="mb-3">
+    <label for="placedesc" class="form-label required">Description du lieu</label>
+    <input
+      type="text"
+      name="placedesc"
+      class="form-control"
+      id="placedesc"
+      formControlName="description"
+    />
+    <p
+      class="position-relative small m-1 text-danger"
+      *ngIf="formError && placeForm.get('description')?.invalid || (placeForm.get('description')?.invalid && (placeForm.get('description')?.touched))"
+    >
+      Choisissez une description de minimum 5 charactères
+    </p>
+  </div>
+  <div class="mb-3">
+    <label for="imageUrl" class="form-label">URL de l'image</label>
+    <input
+      type="text"
+      name="placeimg"
+      class="form-control"
+      id="placeimg"
+      formControlName="pictureUrl"
+    />
+    <p
+      class="position-absolute small m-1 text-danger"
+      *ngIf="placeForm.get('pictureUrl')?.invalid && (placeForm.get('pictureUrl')?.touched)"
+    >
+      Une URL valide de minimum 10 charactères est requise.
+    </p>
+  </div>
+  <div class="mb-3">
+    <label for="placedesc" class="form-label required">Localisation</label>
+    <div class="map" leaflet [leafletOptions]="mapOptions" [leafletLayers]="mapMarkers" (leafletMapReady)="onMapReady($event)" (leafletClick)="onMapClick($event)"></div>
+    <p
+    class="position-relative small m-1 text-danger"
+    *ngIf="formError && !selectedLocation"
+  >
+    Veuillez renseignez la localisation
+  </p>
+  </div>
+</form>
+
   

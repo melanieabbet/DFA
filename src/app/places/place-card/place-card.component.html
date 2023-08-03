@@ -1,11 +1,15 @@
-<!-- <div class="card shadow border-0" style="width: 18rem;">
-    <div class="card-body">
-        <h2>{{place.name}}</h2>
-        <p class="card-text">{{place.description}}</p>
-    </div>
-</div> -->
-
 <accordion-group heading="{{place.name}}"panelClass="customClass">
-    <p>{{place.description}}</p>
-    <p>{{place.location.coordinates[0]}},{{place.location.coordinates[1]}}</p>
+    <div class="row">
+        <div class="col-4">
+            <img class="placeimg" *ngIf="place.pictureUrl; else defaultImage" src="{{place.pictureUrl}}" alt="{{ place.name }}">
+            <ng-template #defaultImage>
+              <img class="placeimg" src="https://picsum.photos/200" alt="Image par défaut">
+            </ng-template>
+        </div>
+        <div class="col-8">
+            <p>{{place.description}}</p>
+            <p>{{place.location.coordinates[0]}},{{place.location.coordinates[1]}}</p>
+            <button type="button" class="btn btn-primary  ms-3" (click)="delete()">Supprimer</button>
+        </div>
+    </div>
 </accordion-group>

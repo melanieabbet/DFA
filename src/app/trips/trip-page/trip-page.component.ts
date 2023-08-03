@@ -11,7 +11,6 @@ import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { EditTripModalComponent } from '../edit-trip-modal/edit-trip-modal.component';
-import { TripRequest } from '../trip.model';
 import { NewPlaceModalComponent } from 'src/app/places/new-place-modal/new-place-modal.component';
 
 @Component({
@@ -102,7 +101,6 @@ export class TripPageComponent {
     };
     //améliorer pour ne mettre a jour que la nouvelle place
   }
-
   showAddPlaceModal(): void {
     this.formModal = this.bsModalService.show(NewPlaceModalComponent, {
       initialState: { tripId: this.tripId },
@@ -114,4 +112,9 @@ export class TripPageComponent {
       });
     }
   }
+    // Fonction appelée lorsque le lieu est supprimé depuis le PlaceCardComponent
+    onPlaceDeleted(placeId: string): void {
+      // Mettez à jour la liste des lieux en filtrant le lieu supprimé
+      this.places = this.places?.filter(place => place.id !== placeId);
+    }
 }

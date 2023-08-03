@@ -46,11 +46,13 @@ export class PlaceService {
   postPlace(newPlace: PlaceRequest): Observable<PlaceRequest[]> {
     return this.http.post<Place[]>(`${environment.apiUrl}/places`,newPlace);
   }
+  deletePlace(id: string): Observable<Place> {
+    return this.http.delete<Place>(`${environment.apiUrl}/places/${id}`);
+  }
   checkPlaceNameExists(placeName: string): Observable<boolean> {
     return this.http.get<Place[]>(`${environment.apiUrl}/places?name=${placeName}`).pipe(
       map((places: Place[]) => places.length > 0)
     );
   }
-
 }
 export { Place };

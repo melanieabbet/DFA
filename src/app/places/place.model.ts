@@ -1,4 +1,6 @@
 export type Place = {
+    id: string;
+    href:string;
     name: string;
     description: string;
     location:{
@@ -7,13 +9,15 @@ export type Place = {
     }
     tripHref: string;
     tripId: string;
-    pictureUrl: string;
+    pictureUrl?: string;
+    createdAt:string;
+    updateAt:string;
   };
 
 export type PlaceRequest = {
     name: string;
     description: string;
-    location?:{
+    location:{
         type: string,
         coordinates: [number, number],
     }

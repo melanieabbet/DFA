@@ -4,7 +4,7 @@ import { latLng, MapOptions, tileLayer, marker, Marker, Map, LatLngExpression } 
 import { Place, PlaceService } from '../place.service';
 import { Trip, TripService } from 'src/app/trips/trip.service';
 import { CustomMarkerOptions } from './custom-marker-options';
-
+import { Geolocation } from 'src/app/utils';
 
 @Component({
   selector: 'app-map',
@@ -33,7 +33,6 @@ export class MapComponent implements OnInit {
     this.mapMarkers = [];
   }
   ngOnInit() {
-
     this.tripService.getCurrentUserTrips().subscribe((trips: Trip[]) => {
       this.trips = trips;
     });
@@ -44,13 +43,19 @@ export class MapComponent implements OnInit {
     });
   }
   onMapReady(map: Map) {
-    // this.map = map;
-    // this.map.on('moveend', () => {
-    //   const center = this.map?.getCenter();
-    //   if(center){
-    //     console.log(`Map moved to ${center.lng}, ${center.lat}`);
-    //   }
-    // });
+    this.map = map;
+    // Centrer la map sur la localisation de l'utilisateur
+    Geolocation.getCurrentPosition()
+      .then((position) => {
+        this.centerMapOnGeolocation(position.coords.latitude, position.coords.longitude);
+      })
+      .catch((error) => {
+        // valeurs par défauts
+        console.error('Error getting geolocation:', error);
+        const fallbackLatitude = 46.778186; 
+        const fallbackLongitude = 6.641524; 
+        this.centerMapOnGeolocation(fallbackLatitude, fallbackLongitude);
+      });
   }
   onTripSelectionChange() {
     this.updateMarkers();
@@ -88,6 +93,11 @@ export class MapComponent implements OnInit {
   private centerMapOnMarker(marker: Marker | null) {
     if (marker) {
       this.map?.panTo(marker.getLatLng());
+    }
+  }
+  private centerMapOnGeolocation(latitude: number, longitude: number) {
+    if (this.map) {
+      this.map.setView([latitude, longitude], 13);
     }
   }
   // Fonction pour convertir les coordonnées en une expression LatLng de Leaflet
