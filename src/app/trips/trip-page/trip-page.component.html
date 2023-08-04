@@ -3,7 +3,7 @@
     <div class="row">
         <div class="d-flex col-12 align-items-center justify-content-center" style="margin-top: -100px;">
             <h1 class="text-center my-5 display-3 fw-bold" > {{ trip.title }}</h1>
-            <div class="d-flex">
+            <div *ngIf="tripOwnedByUser" class="d-flex">
                 <button type="button" class="btn btn-primary  ms-3" (click)="showEditModal()">Editer</button>
                 <button type="button" class="btn btn-primary  ms-3" (click)="delete()">Supprimer</button>
             </div>
@@ -22,7 +22,7 @@
     <div *ngIf="trip" class="row">
         <accordion [isAnimated]="true" class="col-6">
             <ng-container *ngFor="let place of places">
-                <app-place-card [place]="place" (placeDeleted)="onPlaceDeleted($event)"></app-place-card>
+                <app-place-card [place]="place" [tripOwnedByUser]="tripOwnedByUser" (placeDeleted)="onPlaceDeleted($event)"></app-place-card>
             </ng-container>
         </accordion>
         <div class="col-6">

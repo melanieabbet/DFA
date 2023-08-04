@@ -1,9 +1,10 @@
 import { Component,EventEmitter,Input, Output } from '@angular/core';
-import { Place } from '../place.model';
+import { Place, PlaceRequest } from '../place.model';
 import { PlaceService } from '../place.service';
 import { isDefined } from 'src/app/utils';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { EditPlaceModalComponent } from '../edit-place-modal/edit-place-modal.component';
+import { BooleanInput } from 'ngx-bootstrap/focus-trap/boolean-property';
 
 
 @Component({
@@ -13,6 +14,7 @@ import { EditPlaceModalComponent } from '../edit-place-modal/edit-place-modal.co
 })
 export class PlaceCardComponent {
   @Input({required:true}) place!: Place;
+  @Input() tripOwnedByUser: BooleanInput;
   @Output() placeDeleted = new EventEmitter<string>();
   formModal: any;
   constructor (private readonly placeService: PlaceService,  private bsModalService: BsModalService){
@@ -24,7 +26,6 @@ export class PlaceCardComponent {
           // Suppression réussie, effectuez les actions nécessaires
           console.log('Le lieu a été supprimé :', deletedPlace);
           this.onDeletePlace();
-          // ou mettez à jour la liste des voyages dans votre composant parent
         }, error: () => { alert('Une erreur s\'est produite lors de la suppression du lieu :');}
       }
       );

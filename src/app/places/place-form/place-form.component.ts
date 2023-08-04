@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Place, PlaceRequest } from '../place.model';
-import { latLng, marker, Marker, Map, LeafletMouseEvent, tileLayer, LatLngExpression } from 'leaflet';
+import {Place, PlaceRequest } from '../place.model';
+import { latLng, marker, Marker, Map, LeafletMouseEvent, tileLayer } from 'leaflet';
 import { defaultIcon } from '../map/default-marker';
 
 @Component({
@@ -15,7 +15,7 @@ export class PlaceFormComponent implements OnInit {
   formError: boolean;
   placeForm: FormGroup;
 
-  @Input() placeData!: PlaceRequest;
+  @Input() placeData!: Place;
   @Output() submitted = new EventEmitter<PlaceRequest>();
 
   // Propriétés pour la carte
@@ -69,14 +69,14 @@ export class PlaceFormComponent implements OnInit {
     setTimeout(() => map.invalidateSize(), 0);
     if (this.placeData){
       const coordinates = this.placeData.location.coordinates;
-      this.selectedLocation = [coordinates[1], coordinates[0]]; // Swap pour avoir les bonnes coordonées
+      this.selectedLocation = [coordinates[0], coordinates[1]];
       this.mapMarkers = [
-        marker([coordinates[1], coordinates[0]], {
+        marker([coordinates[0], coordinates[1]], {
           icon: defaultIcon,
           title: 'Position actuelle du lieu'
         })
       ];
-      this.mapCenter = [coordinates[1], coordinates[0]];
+      this.mapCenter = [coordinates[0], coordinates[1]];
       map.setView(this.mapCenter, 13);
     }
     

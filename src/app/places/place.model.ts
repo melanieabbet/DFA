@@ -1,3 +1,5 @@
+import { Trip } from "../trips/trip.model";
+
 export type Place = {
     id: string;
     href:string;
@@ -12,6 +14,7 @@ export type Place = {
     pictureUrl?: string;
     createdAt:string;
     updateAt:string;
+    trip?: Trip;
   };
 
 export type PlaceRequest = {

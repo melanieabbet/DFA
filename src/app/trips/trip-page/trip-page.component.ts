@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { TripService } from '../trip.service';
 import { Trip } from '../trip.model';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { Place } from 'src/app/places/place.model';
+import { Place, PlaceRequest } from 'src/app/places/place.model';
 import { PlaceService } from 'src/app/places/place.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { filter, first, forkJoin } from 'rxjs';
@@ -113,9 +113,12 @@ export class TripPageComponent {
       });
     }
   }
-    // Fonction appelée lorsque le lieu est supprimé depuis le PlaceCardComponent
-    onPlaceDeleted(placeId: string): void {
-      // Mettez à jour la liste des lieux en filtrant le lieu supprimé
-      this.places = this.places?.filter(place => place.id !== placeId);
-    }
+  // Fonction appelée lorsque le lieu est supprimé depuis le PlaceCardComponent
+  onPlaceDeleted(placeId: string): void {
+    // Mettez à jour la liste des lieux en filtrant le lieu supprimé
+    this.places = this.places?.filter(place => place.id !== placeId);
+  }
+  onPlaceEdited(placeId: string): void {
+
+  }
 }

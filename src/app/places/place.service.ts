@@ -19,9 +19,13 @@ export class PlaceService {
       switchMap((user) => {
         if (user) {
           const userId = user.id;
-          return this.http.get<Place[]>(`${environment.apiUrl}/places?user=${userId}`);
+          console.log(userId);
+          return this.http.get<Place[]>(`${environment.apiUrl}/places?include=trip`).pipe(
+            map((places) => places.filter(place => place.trip!.userId == userId))
+          );
         } else {
           // Handle the case where no user is authenticated
+          console.log("no auth");
           return of([]);
         }
       })
@@ -32,7 +36,7 @@ export class PlaceService {
       switchMap((user) => {
         if (user) {
           const userId = user.id;
-          return this.http.get<Place[]>(`${environment.apiUrl}/places?user=${userId}&trip=${tripId}`);
+          return this.http.get<Place[]>(`${environment.apiUrl}/places?trip=${tripId}`);
         } else {
           // Handle the case where no user is authenticated
           return of([]);
