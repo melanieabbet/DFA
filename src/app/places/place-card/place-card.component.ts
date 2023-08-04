@@ -16,6 +16,7 @@ export class PlaceCardComponent {
   @Input({required:true}) place!: Place;
   @Input() tripOwnedByUser: BooleanInput;
   @Output() placeDeleted = new EventEmitter<string>();
+  @Output() placeEdited = new EventEmitter<boolean>();
   formModal: any;
   constructor (private readonly placeService: PlaceService,  private bsModalService: BsModalService){
   }
@@ -44,11 +45,13 @@ export class PlaceCardComponent {
       
       if (this.formModal) {
         this.formModal.onHidden.subscribe(() => {
-          //this.loadPlace();
+          this.placeEdited.emit(true);
           console.log("MAJ")
         });
       }
     }
   }
+  
+
 
 }

@@ -100,7 +100,7 @@ export class TripPageComponent {
     if(this.tripId){
       this.placeService.getThisTripPlaces(this.tripId).subscribe((places)=> {this.places = places;})
     };
-    //améliorer pour ne mettre a jour que la nouvelle place
+    //améliorer pour ne mettre a jour que la nouvelle place?
   }
   showAddPlaceModal(): void {
     this.formModal = this.bsModalService.show(NewPlaceModalComponent, {
@@ -117,8 +117,5 @@ export class TripPageComponent {
   onPlaceDeleted(placeId: string): void {
     // Mettez à jour la liste des lieux en filtrant le lieu supprimé
     this.places = this.places?.filter(place => place.id !== placeId);
-  }
-  onPlaceEdited(placeId: string): void {
-
   }
 }

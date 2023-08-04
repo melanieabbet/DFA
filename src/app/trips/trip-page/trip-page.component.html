@@ -22,7 +22,7 @@
     <div *ngIf="trip" class="row">
         <accordion [isAnimated]="true" class="col-6">
             <ng-container *ngFor="let place of places">
-                <app-place-card [place]="place" [tripOwnedByUser]="tripOwnedByUser" (placeDeleted)="onPlaceDeleted($event)"></app-place-card>
+                <app-place-card [place]="place" [tripOwnedByUser]="tripOwnedByUser" (placeDeleted)="onPlaceDeleted($event)" (placeEdited)="loadPlace()"></app-place-card>
             </ng-container>
         </accordion>
         <div class="col-6">
