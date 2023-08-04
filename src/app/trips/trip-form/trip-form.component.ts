@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Trip, TripRequest } from '../trip.model';
-import { TripService } from '../trip.service';
+import { TripRequest } from '../trip.model';
+
 
 @Component({
   selector: 'app-trip-form',
@@ -10,11 +10,6 @@ import { TripService } from '../trip.service';
   styleUrls: ['./trip-form.component.scss'],
 })
 export class TripFormComponent implements OnInit {
-  // trips?: Trip[];
-  // newTrip: TripRequest = {
-  //   title: '',
-  //   description: '',
-  // };
   formError: boolean;
   tripForm: FormGroup;
 
@@ -38,6 +33,7 @@ export class TripFormComponent implements OnInit {
   ngOnInit(): void {
     // If trip is defined, set its value as the form input's value
     if (this.tripData) {
+      console.log("Trip Form: "+this.tripData);
       this.tripForm.patchValue({
         title: this.tripData.title,
         description: this.tripData.description,

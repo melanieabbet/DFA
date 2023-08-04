@@ -1,6 +1,6 @@
 import { Component,EventEmitter, Output, Input } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { TripRequest } from '../trip.model';
+import { Trip, TripRequest } from '../trip.model';
 import { TripService } from '../trip.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { TripService } from '../trip.service';
   styleUrls: ['./edit-trip-modal.component.scss'],
 })
 export class EditTripModalComponent {
-  @Input() tripData!: TripRequest;
+  @Input() tripData!: Trip;
   @Input() tripId!: string;
   originalTitle = "";
   @Output() tripModified = new EventEmitter<boolean>();
@@ -18,6 +18,7 @@ export class EditTripModalComponent {
   }
   ngOnInit(): void {
     if (this.tripData) {
+      console.log("Trip Modal: "+this.tripData);
       this.originalTitle = this.tripData.title;
     }
   }

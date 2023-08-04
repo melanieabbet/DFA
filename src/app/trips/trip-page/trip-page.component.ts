@@ -65,6 +65,7 @@ export class TripPageComponent {
 
   showEditModal(): void {
       if (isDefined(this.trip)) {
+        console.log("Trip Page: "+this.trip);
         this.formModal = this.bsModalService.show(EditTripModalComponent, {
           initialState: {tripData: this.trip , tripId: this.tripId },
         });

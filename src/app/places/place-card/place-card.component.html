@@ -9,7 +9,10 @@
         <div class="col-8">
             <p>{{place.description}}</p>
             <p>{{place.location.coordinates[0]}},{{place.location.coordinates[1]}}</p>
-            <button type="button" class="btn btn-primary  ms-3" (click)="delete()">Supprimer</button>
+            <div class="d-flex">
+                <button type="button" class="btn btn-primary  ms-3" (click)="showEditModal()">Editer</button>
+                <button type="button" class="btn btn-primary  ms-3" (click)="delete()">Supprimer</button>
+            </div>
         </div>
     </div>
 </accordion-group>

@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { PlaceRequest } from '../place.model';
-import { latLng, marker, Marker, Map, LeafletMouseEvent, tileLayer } from 'leaflet';
+import { Place, PlaceRequest } from '../place.model';
+import { latLng, marker, Marker, Map, LeafletMouseEvent, tileLayer, LatLngExpression } from 'leaflet';
 import { defaultIcon } from '../map/default-marker';
 
 @Component({
@@ -22,11 +22,13 @@ export class PlaceFormComponent implements OnInit {
   mapOptions: L.MapOptions;
   mapMarkers: Marker[] = [];
   selectedLocation: [number, number] | null = null;
+  mapCenter: [number, number] = [46.778186, 6.641524];
 
   constructor(
     readonly modalRef: BsModalRef,
     formBuilder: FormBuilder
   ) {
+    console.log("Form: "+this.placeData);
     this.formError = false;
     this.placeForm = formBuilder.group({
       name: formBuilder.control('', [
@@ -53,6 +55,7 @@ export class PlaceFormComponent implements OnInit {
   ngOnInit(): void {
     // If place is defined, set its value as the form input's value
     if (this.placeData) {
+      console.log("Form OnInit: "+ this.placeData);
       this.placeForm.patchValue({
         name: this.placeData.name,
         description: this.placeData.description,
@@ -64,12 +67,25 @@ export class PlaceFormComponent implements OnInit {
     //centrer ici sur la localisation de l'user
     //Debug map
     setTimeout(() => map.invalidateSize(), 0);
+    if (this.placeData){
+      const coordinates = this.placeData.location.coordinates;
+      this.selectedLocation = [coordinates[1], coordinates[0]]; // Swap pour avoir les bonnes coordonées
+      this.mapMarkers = [
+        marker([coordinates[1], coordinates[0]], {
+          icon: defaultIcon,
+          title: 'Position actuelle du lieu'
+        })
+      ];
+      this.mapCenter = [coordinates[1], coordinates[0]];
+      map.setView(this.mapCenter, 13);
+    }
+    
   }
   // Fonction pour ajouter un marqueur sur la carte au clic
   onMapClick(event: LeafletMouseEvent) {
     const lat = event.latlng.lat;
     const lng = event.latlng.lng;
-    this.selectedLocation = [lng, lat]; // Swap pour avoir les bonnes coordonées
+    this.selectedLocation = [lat,lng];
     this.mapMarkers = [
       marker(event.latlng, {
         icon: defaultIcon,

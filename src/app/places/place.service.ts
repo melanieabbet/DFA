@@ -54,5 +54,9 @@ export class PlaceService {
       map((places: Place[]) => places.length > 0)
     );
   }
+  updatePlace(id:string, updatedPlace: PlaceRequest): Observable<PlaceRequest[]> {
+    return this.http.patch<Place[]>(`${environment.apiUrl}/places/${id}`,updatedPlace);
+  }
+
 }
 export { Place };

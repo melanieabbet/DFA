@@ -9,7 +9,6 @@ import { TripService } from '../trip.service';
   styleUrls: ['./new-trip-modal.component.scss'],
 })
 export class NewTripModalComponent {
-  //@Output() tripAdded = new EventEmitter<boolean>();
   constructor(readonly modalRef: BsModalRef, private tripService: TripService,) {
 
   }
@@ -35,14 +34,5 @@ export class NewTripModalComponent {
         });
       }
     });
-
-    //this.modalRef.hide();
-    //placer ici la logique de création add(trip)
-    //puis fermer la modal avec la ref modalRef
   }
-  //ajouter la logique de validation existant actuellement dans trip-form-component
-
-
-
-
 }
