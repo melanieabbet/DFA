@@ -4,7 +4,7 @@ import { User } from '../user.model';
 import { DatePipe } from '@angular/common';
 import { isDefined } from 'src/app/utils';
 import { Router } from '@angular/router';
-import { UserUpdateRequest } from 'src/app/auth/user-register-request.model';
+import { UserUpdateRequest } from 'src/app/users/user-request.model';
 
 @Component({
   selector: 'app-account-page',
@@ -17,7 +17,9 @@ export class AccountPageComponent implements OnInit {
 
   user?: User; //Define OnInit until there could be null or undefine
   isEditMode: boolean = false; // Switch Edit mode variable
-  originalUserRequest?: UserUpdateRequest; // Store the original user object
+  // originalUserRequest?: UserUpdateRequest; // Store the original user object
+  originalName: string = ''; // Store the original name
+  originalPassword?: string = "password"; // Store the original password (dummy value) for UX because we cannot retrieve user password)
   /**
    * Manage error: 
    * actionError to define if there is an error
@@ -42,12 +44,12 @@ export class AccountPageComponent implements OnInit {
     this.authService.getUser$().subscribe((user) => {
       this.user = user;
       this.isEditMode = false;
-      if (user){
-        //Initialize the values with the user object
-        this.originalUserRequest = { 
-          name: user.name,
-         }; 
-      }
+      // if (user){
+      //   //Initialize the values with the user object
+      //   this.originalUserRequest = { 
+      //     name: user.name,
+      //    }; 
+      // }
     });
   }
   /**
@@ -82,6 +84,11 @@ export class AccountPageComponent implements OnInit {
    */
   enableEditMode() {
     this.isEditMode = true;
+    if (this.user){
+        // Store the original name and set password to undefine (before dummy value)
+        this.originalName = this.user.name;
+        this.originalPassword = undefined;
+    }
   }
    /**
    * Fonction to update the user data
@@ -93,13 +100,15 @@ export class AccountPageComponent implements OnInit {
   }
   /**
    * Cancel action:
-   * 1. Cancel the action of update user data - Reset the current user data
-   * 2. disable editMode
+   * 1. Cancel the action of update user data - disable editMode 
+   * 2. Reset the current user data
    */
   cancelEdit() {
-    this.authService.getUser$().subscribe((user) => {
-      this.user = user;
-    });
     this.isEditMode = false;
+    if (this.user){
+      // Restore the original name and password (dummy value) if editing is canceled
+      this.user.name = this.originalName;
+      this.originalPassword = "password";
+    }
   }
 }

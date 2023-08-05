@@ -6,7 +6,7 @@ import { User } from "../users/user.model";
 import { AuthRequest } from "./auth-request.model";
 import { AuthResponse } from "./auth-response.model";
 import { environment } from "src/environments/environment";
-import { UserRegisterRequest } from "./user-register-request.model";
+import { UserRegisterRequest } from "../users/user-request.model";
 
 // Add a constant for the storage key in the LocalStorage
 const AUTH_STORAGE_KEY = "travely-auth";

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 import { mergeMap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { UserRegisterRequest } from '../user-register-request.model';
+import { UserRegisterRequest } from '../../users/user-request.model';
 
 @Component({
   selector: 'app-register-page',

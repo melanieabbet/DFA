@@ -13,20 +13,24 @@
             <li class="mx-3"><i class="bi bi-airplane-fill me-2 text-primary"></i><span class="fw-bold">{{ user.tripsCount }}</span></li>
             <li class="mx-3"><i class="bi bi-calendar me-2 text-primary"></i><span class="fw-bold">{{ formatDate(user.createdAt) }}</span></li>
         </ul>
-        <!-- <ul *ngIf="user" class="col-12 d-flex justify-content-center gap-4 my-3" style="list-style:none;">
-            <li class="bg-light bg-gradient p-2"><i class="bi-person-fill me-2 text-primary"></i><span class="fs-4">{{ user.name }}</span></li>
-            <li  class="bg-light bg-gradient p-2"><i class="bi bi-key-fill me-2 text-primary"></i><span class="fs-4">*******</span></li>
-        </ul> -->
-        <ul *ngIf="user" class="col-12 d-flex justify-content-center" style="list-style:none;">
-            <input class="bg-light bg-gradient p-2" type="text" [(ngModel)]="user.name" [disabled]="!isEditMode" />
-            <input class="bg-light bg-gradient p-2" type="password" [(ngModel)]="user.name" [disabled]="!isEditMode" />
+        <ul *ngIf="user" class="col-12 my-5 d-flex justify-content-center gap-3" style="list-style:none;">
+            <div>
+                <label for="username" class="form-label"><i class="bi bi-person-fill me-2 text-primary"></i><span class="fw-bold">Nom d'utilisateur</span></label>
+                <input id="username" class="p-2 form-control form-control-lg" type="text" [(ngModel)]="user.name" [disabled]="!isEditMode" [ngClass]="{'text-secondary': !isEditMode}" />
+            </div>
+            <div>
+                <label for="username" class="form-label"><i class="bi bi-key-fill me-2 text-primary"></i><span class="fw-bold">Mot de passe</span></label>
+                <input class="p-2 form-control form-control-lg" type="password" [(ngModel)]="originalPassword" [disabled]="!isEditMode" [ngClass]="{'text-secondary': !isEditMode}"/>
+            </div>
         </ul>
         <div *ngIf="actionError" class="col-12 d-flex justify-content-center my-5">
             <p class="bg-danger text-light text-center py-2 px-5">{{ errorMessage }}</p>
         </div>
-        <ng-container *ngIf="isEditMode;">
-            <button type="button" class="btn btn-success ms-3" (click)="saveChanges()">Valider</button>
-            <button type="button" class="btn btn-danger ms-3" (click)="cancelEdit()">Annuler</button>
+        <ng-container *ngIf="isEditMode;" class="col-12 d-flex">
+            <div class="d-flex gap-3 justify-content-center">
+                <button type="button" class="btn btn-outline-danger" (click)="cancelEdit()">Annuler</button>
+                <button type="button" class="btn btn-success" (click)="saveChanges()">Valider</button>
+            </div>
         </ng-container>
     </div>
 </div>
