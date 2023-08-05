@@ -3,6 +3,7 @@ import { authGuard } from "./auth/guards/auth.guard";
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginPageComponent } from "./auth/login-page/login-page.component";
+import { RegisterPageComponent } from "./auth/register-page/register-page.component";
 import { InspiPageComponent } from "./inspi-page/inspi-page.component";
 import { TripPageComponent } from "./trips/trip-page/trip-page.component";
 
@@ -11,6 +12,10 @@ const routes: Routes = [
   {
     path: "login",
     component: LoginPageComponent,
+  },
+  {
+    path: "register",
+    component: RegisterPageComponent,
   },
   {
     path: "home",

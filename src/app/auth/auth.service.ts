@@ -6,6 +6,7 @@ import { User } from "../users/user.model";
 import { AuthRequest } from "./auth-request.model";
 import { AuthResponse } from "./auth-response.model";
 import { environment } from "src/environments/environment";
+import { UserRegisterRequest } from "./user-register-request.model";
 
 // Add a constant for the storage key in the LocalStorage
 const AUTH_STORAGE_KEY = "travely-auth";
@@ -67,7 +68,20 @@ export class AuthService {
       })
     );
   }
-
+    /**
+   * Check if user name is already taken
+   */
+    checkUserNameExists$(userName: string): Observable<boolean> {
+      return this.http.get<User[]>(`${environment.apiUrl}/users?name=${userName}`).pipe(
+        map((users: User[]) => users.length > 0)
+      );
+    }
+    /**
+   * Create a new user account and login if successful.
+   */
+    createUser$(userRegisterRequest: UserRegisterRequest): Observable<AuthResponse>{
+      return this.http.post<AuthResponse>(`${environment.apiUrl}/users`,userRegisterRequest);
+    }
   
 
   /**

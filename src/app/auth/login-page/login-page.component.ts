@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-//import { AuthRequest } from "src/app/models/auth-request";
 import { AuthRequest } from "src/app/auth/auth-request.model";
 import { AuthService } from "../auth.service";
 import { Router } from "@angular/router";
