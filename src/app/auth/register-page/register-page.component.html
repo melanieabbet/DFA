@@ -1,13 +1,13 @@
 <div class="container-fluid bg-light" style="min-height:100vh;">
     <div class="row">
       <div class="col-md-6 offset-md-3">
-        <h1 class="h1 text-center text-primary mt-5 mb-4">Travely</h1>
-        <h2 class="h5 text-center">Créez un compte pour publier et partager vos voyages autour du monde</h2>
+        <h1 class="h1 text-center text-primary mt-5 pt-5 mb-4"><i class="bi bi-airplane-fill me-3 text-primary"></i>Travely</h1>
+        <h2 class="h5 text-center">Crée un compte pour publier et partager tes voyages autour du monde</h2>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
-        <form class="mt-4 d-flex flex-wrap gap-3 align-items-end justify-content-center" #registerForm="ngForm" (submit)="onSubmit(registerForm)">
+        <form class="py-5 my-3 d-flex flex-wrap gap-3 align-items-end justify-content-center" #registerForm="ngForm" (submit)="onSubmit(registerForm)">
           <div>
             <label for="username" class="form-label m-1">Identifiant</label>
             <input 
@@ -17,10 +17,12 @@
               id="username"
               #usernameField="ngModel"
               required
+              minlength="3" 
+              maxlength="25" 
               [(ngModel)]="authRequest.username"
             />
-            <p class="position-absolute small m-1 text-danger" *ngIf="usernameField.hasError('required') && usernameField.touched">
-              Identifiant obligatoire
+            <p class="position-absolute small m-1 text-danger" *ngIf="(usernameField.hasError('required')||usernameField.hasError('minlength')||usernameField.hasError('maxlength')) && usernameField.touched">
+              Identifiant obligatoire <br> (3 à 25 caractères)
             </p>
           </div>
           <div>
@@ -32,19 +34,20 @@
               id="passwrod"
               #passwordField="ngModel"
               required
+              minlength="3" 
               [(ngModel)]="authRequest.password"
             />
-            <p class="position-absolute small m-1 text-danger" *ngIf="passwordField.hasError('required') && passwordField.touched">
-            Mot de passe obligatoire
+            <p class="position-absolute small m-1 text-danger" *ngIf="(passwordField.hasError('required')||passwordField.hasError('minlength')) && passwordField.touched">
+            Mot de passe obligatoire <br> (minimum 4 caractères)
             </p>
           </div>
           <div>
             <button class="btn btn-primary" type="submit" [disabled]="registerForm.invalid">Créer un compte</button>
-              <p *ngIf="registerError">
-                Unable to log in. See the log for more information.
-              </p>
           </div>
         </form>
+      </div>
+      <div *ngIf="registerError" class="col-12">
+        <p class="text-danger text-center">{{ errorMessage }}</p>
       </div>
     </div>
     <div class="row">

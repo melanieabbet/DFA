@@ -23,6 +23,7 @@ export class RegisterPageComponent {
    * (probably because the name was already taken).
    */
   registerError: boolean;
+  errorMessage = "Une erreur c'est produite lors de la création du compte";
   constructor(private auth: AuthService, private router: Router) {
     this.authRequest = { username: '', password: '' };
     this.registerError = false;
@@ -35,82 +36,55 @@ export class RegisterPageComponent {
     if (form.valid) {
       // Hide any previous login error.
       this.registerError = false;
+      // Run fonction to create this new user.
       this.createNewUser();
     }
   }
-
-  // createNewUser(){
-  //   this.auth.checkUserNameExists$(this.authRequest.username).subscribe((exists:boolean) => {
-  //     if (exists) {
-  //       alert("Cet utilisateur existe déjà, veuillez choisir un autre nom");
-  //     } else {
-  //       this.auth.createUser$(this.authRequest).subscribe({
-  //         next: (user) =>{
-  //           if (user){
-  //             // User was created then perform the authentication request to the API and redirect to homepage.
-  //             this.auth.login$(this.authRequest).subscribe({
-  //               next: () => this.router.navigateByUrl("/"),
-  //               error: (err) => {
-  //                 this.registerError = true;
-  //                 console.warn(`Authentication failed: ${err.message}`);
-  //               },
-  //             });
-  //           }
-  //         }, error: () => {
-  //           alert("Erreur lors de l'ajout l'utilisateur");
-  //         },
-  //       });
-  //     }
-  //   });
-  // }
-  // createNewUser() {
-  //   this.auth.checkUserNameExists$(this.authRequest.username).pipe(
-  //     filter((exists: boolean) => !exists), //If name free, continue
-  //     mergeMap(() => this.auth.createUser$(this.authRequest)),//Create the user
-  //     filter((user) => !!user), //User was created then continue
-  //     mergeMap(() => this.auth.login$(this.authRequest)), //Login with this new user information
-  //     tap(() => this.router.navigateByUrl("/")),//redirect to homepage
-  //     // catch the error
-  //     catchError((err) => {
-  //       this.registerError = true;
-  //       console.warn(`Authentication failed: ${err.message}`);
-  //       return []; // Return an empty array to complete the Observable gracefully
-  //     })
-  //   ).subscribe();
-  // }
-
-createNewUser() {
-  const userRegistrationRequest: UserRegisterRequest = { name: this.authRequest.username, password: this.authRequest.password };
-  this.auth.checkUserNameExists$(userRegistrationRequest.name).pipe(
-    mergeMap((exists: boolean) => {
-      if (exists) {
-        // Retourne une erreur personnalisée pour indiquer que le nom d'utilisateur existe déjà
-        return throwError(() => new Error("Cet utilisateur existe déjà, veuillez choisir un autre nom"));
-      } else {
-        // Crée l'utilisateur
-        return this.auth.createUser$(userRegistrationRequest);
+  /**
+   * Called when the form is submitted and valid
+   * The Process of creation:
+   * 1: Check user name available
+   * 2: If available - Create user
+   * 3: Login of the new user
+   * 4: Once done - Redirect to homepage
+   */
+  createNewUser() {
+    // The API - need a different object to create a user ( value name instead of username) so we create this object
+    const userRegistrationRequest: UserRegisterRequest = { name: this.authRequest.username, password: this.authRequest.password };
+    //1: Check user name available
+    this.auth.checkUserNameExists$(userRegistrationRequest.name).pipe(
+      mergeMap((exists: boolean) => {
+        if (exists) {
+          // Not available: Error
+          this.errorMessage = "Cet utilisateur existe déjà, choisi un autre nom";
+          return throwError(() => new Error("Cet utilisateur existe déjà"));
+        } else {
+          // 2: If available - Create user
+          return this.auth.createUser$(userRegistrationRequest);
+        }
+      }),
+      mergeMap((user) => {
+        if (user) {
+          // 3: Login of the new user (with the element used for the creation - no human error possible here (wrong password etc)
+          return this.auth.login$(this.authRequest);
+        } else {
+          // No user: Error
+          this.errorMessage = "Une erreur c'est produite lors de la création du compte";
+          return throwError(() => new Error("Erreur lors de l'ajout de l'utilisateur"));
+        }
+      }),
+      catchError((err) => {
+        this.registerError = true; // If not initialized inside the pipe the default error message will be displayed
+        console.warn(`Authentication failed: ${err.message}`);
+        return []; // empty array to complete observable
+      })
+    ).subscribe({
+      next: () => {
+       // 4: Once done - Redirect to homepage
+        this.router.navigateByUrl("/");
       }
-    }),
-    mergeMap((user) => {
-      if (user) {
-        // Effectue l'authentification et redirige vers la page d'accueil
-        return this.auth.login$(this.authRequest);
-      } else {
-        // En cas d'erreur lors de la création, on génère une erreur personnalisée
-        return throwError(() => new Error("Erreur lors de l'ajout de l'utilisateur"));
-      }
-    }),
-    catchError((err) => {
-      this.registerError = true;
-      console.warn(`Authentication failed: ${err.message}`);
-      return []; // Retourne un tableau vide pour compléter gracieusement l'Observable
-    })
-  ).subscribe({
-    next: () => {
-      this.router.navigateByUrl("/");
-    }
-  });
-}
+    });
+  }
 
   
 }
