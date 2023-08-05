@@ -26,6 +26,7 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { MapComponent } from './places/map/map.component';
 import { MapPopupComponent } from './places/map-popup/map-popup.component';
 import { EditPlaceModalComponent } from './places/edit-place-modal/edit-place-modal.component';
+import { AccountPageComponent } from './users/account-page/account-page.component';
 
 
 
@@ -47,7 +48,8 @@ import { EditPlaceModalComponent } from './places/edit-place-modal/edit-place-mo
     NewPlaceModalComponent,
     MapComponent,
     MapPopupComponent,
-    EditPlaceModalComponent
+    EditPlaceModalComponent,
+    AccountPageComponent
   ],
   imports: [
     FormsModule,

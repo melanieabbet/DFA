@@ -47,7 +47,7 @@ export class TripService {
     );
   }
 
-  deleteTrip(id: string): Observable<Trip> {
+  deleteTrip(id: string) {
     return this.http.delete<Trip>(`${environment.apiUrl}/trips/${id}`);
   }
 

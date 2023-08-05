@@ -6,6 +6,7 @@ import { LoginPageComponent } from "./auth/login-page/login-page.component";
 import { RegisterPageComponent } from "./auth/register-page/register-page.component";
 import { InspiPageComponent } from "./inspi-page/inspi-page.component";
 import { TripPageComponent } from "./trips/trip-page/trip-page.component";
+import { AccountPageComponent } from "./users/account-page/account-page.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" },
@@ -16,6 +17,12 @@ const routes: Routes = [
   {
     path: "register",
     component: RegisterPageComponent,
+  },
+  {
+    path: "account",
+    component: AccountPageComponent,
+    // Prevent access to this page to unauthenticated users
+    canActivate: [authGuard],
   },
   {
     path: "home",

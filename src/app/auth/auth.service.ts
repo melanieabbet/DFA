@@ -82,8 +82,6 @@ export class AuthService {
     createUser$(userRegisterRequest: UserRegisterRequest): Observable<AuthResponse>{
       return this.http.post<AuthResponse>(`${environment.apiUrl}/users`,userRegisterRequest);
     }
-  
-
   /**
    * Logs out a user and emit an empty AuthResponse
    */
@@ -96,4 +94,11 @@ export class AuthService {
   #saveAuth(authResponse: AuthResponse): void {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authResponse));
   }
+  /**
+   * Delete the user - (The API will delete all the Trips and Places)
+   */
+  deleteUser(id: string){
+    return this.http.delete<User>(`${environment.apiUrl}/users/${id}`);
+  }
+
 }
