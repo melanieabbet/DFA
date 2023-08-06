@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnInit, ViewChild,ElementRef } from '@angular/core';
 import { defaultIcon } from './default-marker';
 import { latLng, MapOptions, tileLayer, marker, Marker, Map, LatLngExpression } from 'leaflet';
 import { Place, PlaceService } from '../place.service';
 import { Trip, TripService } from 'src/app/trips/trip.service';
 import { CustomMarkerOptions } from './custom-marker-options';
 import { Geolocation } from 'src/app/utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, AfterViewInit {
+  @ViewChild('mappopup') mappopup?: ElementRef; // Reference to the popup element in the template. undefine till creation of the marker
   mapOptions: MapOptions;
   mapMarkers: Marker[];
   map: Map | undefined;
@@ -19,7 +21,7 @@ export class MapComponent implements OnInit {
   selectedTripId: string | null = null; // ID of selected
   searchText: string = ''; // input text value
   existPlaces: boolean;
-  constructor(private placeService: PlaceService, private tripService: TripService){
+  constructor(private placeService: PlaceService, private tripService: TripService, private router: Router,private ngZone: NgZone){
     this.mapOptions = {
       layers: [
         tileLayer(
@@ -56,6 +58,36 @@ export class MapComponent implements OnInit {
     });
   }
 
+  // Initializes the click event listener for the popup link after the view is fully initialized.
+  // Listens for clicks on the link and calls the onPopupLinkClick method to redirect.
+  ngAfterViewInit() {
+    if (this.mappopup) {
+      const popupElement: HTMLElement = this.mappopup.nativeElement;
+      console.log("const popUp:" + popupElement);
+      popupElement.addEventListener('click', (event: Event) => this.onPopupLinkClick(event));
+    }
+  }
+  /**
+   * Event handler for clicking on a link inside a popup.
+   * Ensures navigation is performed within the Angular zone to prevent the "Navigation triggered outside Angular zone" error.
+   * 
+   * @param event The click event object.
+   */
+  onPopupLinkClick(event: Event) {
+    const target = event.target as HTMLElement;
+    if (target && target.classList.contains('details-link')) {
+      const tripId = target.dataset['tripid']; // Get the tripId from the link's text
+
+      // Use ngZone.run() to navigate within the Angular zone.
+      this.ngZone.run(() => {
+        // Use the Router service to navigate to the trip details page
+        this.router.navigate(['/trips', tripId]);
+      });
+  
+      console.log("Clicked:"+tripId);
+    }
+  }
+  
 
   /**
    * Action to execute when mMap is ready
@@ -155,13 +187,20 @@ export class MapComponent implements OnInit {
       const tripId = (marker.options as CustomMarkerOptions)?.tripId;
       //Popup template
       const popupContent = `
-        <div>
+        <div #mappopup class="map-popup">
           <h3 class=""><strong>${title}</strong></h3>
           <p>${description}</p> 
-          <p>${tripId}</p> 
+          <button class="details-link btn btn-secondary btn-sm" data-tripId="${tripId}"><i class="bi bi-plus-lg pe-1"></i>Détails</button>  
         </div>
       `;
       this.attachPopupToMarker(marker, popupContent);
+      // Add the click event listener to the popup link
+    marker.on('popupopen', () => {
+      const popupElement = document.querySelector('.map-popup');
+      if (popupElement) {
+        popupElement.addEventListener('click', (event: Event) => this.onPopupLinkClick(event));
+      }
+    });
       //add the new marker to the markers list for later display / filter
       markers.push(marker);
     });
