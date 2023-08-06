@@ -9,7 +9,7 @@
     <div class="col-12">
       <form class="py-5 my-3 d-flex flex-wrap gap-3 align-items-end justify-content-center" #loginForm="ngForm" (submit)="onSubmit(loginForm)">
         <div>
-          <label for="username" class="form-label m-1">Identifiant</label>
+          <label for="username" class="form-label m-1 required">Identifiant</label>
           <input 
             class="form-control"
             type="text"
@@ -24,7 +24,7 @@
           </p>
         </div>
         <div>
-          <label for="password" class="form-label m-1">Mot de passe</label>
+          <label for="password" class="form-label m-1 required">Mot de passe</label>
           <input
             class="form-control"
             type="password"

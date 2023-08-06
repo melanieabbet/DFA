@@ -13,3 +13,13 @@
 
 /* Importing Bootstrap Icon SCSS file. */
 @import "~bootstrap-icons/font/bootstrap-icons.css";
+
+
+/*Global styling*/
+
+/* Add .required class to style label with required input */
+.required::after {
+    content: '*';
+    color: red;
+    margin-left: 5px;
+  }

@@ -6,7 +6,7 @@ import { User } from "../users/user.model";
 import { AuthRequest } from "./auth-request.model";
 import { AuthResponse } from "./auth-response.model";
 import { environment } from "src/environments/environment";
-import { UserRegisterRequest } from "../users/user-request.model";
+import { UserRegisterRequest, UserUpdateRequest } from "../users/user-request.model";
 
 // Add a constant for the storage key in the LocalStorage
 const AUTH_STORAGE_KEY = "travely-auth";
@@ -99,6 +99,12 @@ export class AuthService {
    */
   deleteUser(id: string){
     return this.http.delete<User>(`${environment.apiUrl}/users/${id}`);
+  }
+  /**
+   * Update the user - (Password and/or Name)
+   */
+  updateUser$(id: string, userUpdateRequest:UserUpdateRequest): Observable<User>{
+    return this.http.patch<User>(`${environment.apiUrl}/users/${id}`, userUpdateRequest);
   }
 
 }

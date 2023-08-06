@@ -13,25 +13,55 @@
             <li class="mx-3"><i class="bi bi-airplane-fill me-2 text-primary"></i><span class="fw-bold">{{ user.tripsCount }}</span></li>
             <li class="mx-3"><i class="bi bi-calendar me-2 text-primary"></i><span class="fw-bold">{{ formatDate(user.createdAt) }}</span></li>
         </ul>
-        <ul *ngIf="user" class="col-12 my-5 d-flex justify-content-center gap-3" style="list-style:none;">
+        <form *ngIf="user" #userForm="ngForm" class="col-12 my-5 d-flex align-items-end justify-content-center gap-3" style="list-style:none;">
             <div>
-                <label for="username" class="form-label"><i class="bi bi-person-fill me-2 text-primary"></i><span class="fw-bold">Nom d'utilisateur</span></label>
-                <input id="username" class="p-2 form-control form-control-lg" type="text" [(ngModel)]="user.name" [disabled]="!isEditMode" [ngClass]="{'text-secondary': !isEditMode}" />
+                <label for="username" class="form-label required"><i class="bi bi-person-fill me-2 text-primary"></i><span class="fw-bold">Nom d'utilisateur</span></label>
+                <input
+                    id="username"
+                    name="username"
+                    class="p-2 form-control"
+                    type="text"
+                    required
+                    minlength="3"
+                    maxlength="25"
+                    #usernameField="ngModel"
+                    [(ngModel)]="userUpdateRequest.name"
+                    (ngModelChange)="onNameChange($event)"
+                    [disabled]="!isEditMode"
+                    [ngClass]="{'text-secondary': !isEditMode}"
+                />
+                <p class="position-absolute small m-1 text-danger" *ngIf="(usernameField.hasError('required') || usernameField.hasError('minlength')|| usernameField.hasError('maxlength')) && usernameField.touched">
+                    Mot de 3 à 25 caractères
+                </p>
             </div>
             <div>
-                <label for="username" class="form-label"><i class="bi bi-key-fill me-2 text-primary"></i><span class="fw-bold">Mot de passe</span></label>
-                <input class="p-2 form-control form-control-lg" type="password" [(ngModel)]="originalPassword" [disabled]="!isEditMode" [ngClass]="{'text-secondary': !isEditMode}"/>
+                <label for="username"class="form-label"><i class="bi bi-key-fill me-2 text-primary"></i><span class="fw-bold">Mot de passe</span></label>
+                <input
+                    class="p-2 form-control"
+                    type="password"
+                    name="password"
+                    id="password"
+                    minlength="4"
+                    [(ngModel)]="userUpdateRequest.password"
+                    [disabled]="!isEditMode"
+                    #passwordField="ngModel"
+                    [ngClass]="{'text-secondary': !isEditMode}"
+                    (ngModelChange)="onPasswordChange($event)"
+                />
+                <p class="position-absolute small m-1 text-danger" *ngIf=" passwordField.hasError('minlength')||passwordField.hasError('maxlength')&& passwordField.touched">
+                    Minimum 4 caractères
+                </p>
             </div>
-        </ul>
+            <ng-container *ngIf="isEditMode;" class="col-12 d-flex">
+                <div class="d-flex gap-3 justify-content-center">
+                    <button type="button" class="btn btn-outline-danger" (click)="cancelEdit()">Annuler</button>
+                    <button type="button" class="btn btn-success" (click)="saveChanges()" [disabled]="userForm.invalid" >Valider</button>
+                </div>
+            </ng-container>
+        </form>
         <div *ngIf="actionError" class="col-12 d-flex justify-content-center my-5">
             <p class="bg-danger text-light text-center py-2 px-5">{{ errorMessage }}</p>
         </div>
-        <ng-container *ngIf="isEditMode;" class="col-12 d-flex">
-            <div class="d-flex gap-3 justify-content-center">
-                <button type="button" class="btn btn-outline-danger" (click)="cancelEdit()">Annuler</button>
-                <button type="button" class="btn btn-success" (click)="saveChanges()">Valider</button>
-            </div>
-        </ng-container>
     </div>
 </div>
 

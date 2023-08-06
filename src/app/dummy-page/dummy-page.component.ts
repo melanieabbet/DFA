@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { UserApiService } from "../users/user-api.service";
+import { UserApiService } from "../users/user.service";
 
 @Component({
   selector: "app-dummy-page",
