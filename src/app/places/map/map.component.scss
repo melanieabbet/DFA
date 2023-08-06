@@ -3,7 +3,18 @@
     width: auto;
     margin: auto;
   }
-  .filter-container {
-    margin-bottom: 1em; 
-  }
-  
+.filter-container {
+  margin-bottom: 1em; 
+}
+.input-group{
+  width: max-content;
+  align-items: center;
+}
+.center-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2000;
+}

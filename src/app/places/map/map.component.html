@@ -1,12 +1,17 @@
-<!-- map.component.html -->
-<div class="filter-container">
-  <label for="tripSelect">Filtrer par voyage:</label>
-  <select id="tripSelect" [(ngModel)]="selectedTripId" (change)="onTripSelectionChange()">
-    <option value="">Tous les voyages</option>
-    <option *ngFor="let trip of trips" [value]="trip.id">{{ trip.title }}</option>
-  </select>
-  <label for="search">Filtrer par voyage:</label>
-  <input id="search" type="text" [(ngModel)]="searchText" (keyup)="onSearchTextChanged()">
+<div class="filter-container d-flex gap-3 justify-content-end mb-4">
+  <div class="input-group">
+    <label class="input-group-text text-light bg-primary" for="tripSelect"><i class="bi bi-airplane-fill"></i></label>
+    <select class="form-select" id="tripSelect" [(ngModel)]="selectedTripId" (change)="onTripSelectionChange()">
+      <option value="">Tous les voyages</option>
+      <option *ngFor="let trip of trips" [value]="trip.id">{{ trip.title }}</option>
+    </select>
+  </div>
+  <div class="input-group flex-nowrap">
+    <span class="input-group-text text-light bg-primary" id="search"><i class="bi bi-search"></i></span>
+    <input id="search" class="form-control" aria-describedby="search" placeholder="Rechercher par mot-clé" type="text" [(ngModel)]="searchText" (keyup)="onSearchTextChanged()">
+  </div>
 </div>
-
+<div *ngIf="!existPlaces" class="center-message bg-dark text-light p-5 rounded">
+  <p class="mb-0 fs-3 fw-bold">Aucun lieu à afficher</p>
+</div>
 <div class="map" leaflet [leafletOptions]="mapOptions" [leafletLayers]="mapMarkers" (leafletMapReady)="onMapReady($event)"></div>

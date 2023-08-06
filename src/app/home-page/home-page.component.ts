@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TripService } from '../trips/trip.service';
 import { Trip } from '../trips/trip.model';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { NewTripModalComponent } from '../trips/new-trip-modal/new-trip-modal.component';
 
 @Component({

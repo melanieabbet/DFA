@@ -1,17 +1,23 @@
 <app-nav-element></app-nav-element>
+
 <div class="container-fluid" style="background-color: white; margin-top:200px">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between">
-                <h1 class="display-1 fw-bold" style="margin-top:-60px;">Inspiration voyage</h1>
-            </div>
+  <div class="row">
+    <div class="col-12 px-5">
+      <div class="d-flex justify-content-between">
+        <h1 class="display-1 fw-bold" style="margin-top:-60px;">Inspiration voyage</h1>
+        <div class="input-group flex-nowrap" style="margin-top:-60px;">
+          <span class="input-group-text text-light bg-primary" id="search"><i class="bi bi-search"></i></span>
+          <input type="text" class="form-control" aria-describedby="search" placeholder="Rechercher par mot-clé" (keyup)="filterTrips($event)">
         </div>
-        <div class="col-12">
-            <ul *ngIf="trips" class="d-flex flex-wrap gap-4 mt-5" style="list-style:none;">
-                <li *ngFor="let trip of trips">
-                    <app-trip-card [trip]="trip"></app-trip-card>
-                </li>
-            </ul>
-        </div>
+      </div>
     </div>
+    <div class="col-12 px-5 pb-5 mb-5">
+      <ul *ngIf="filteredTrips && filteredTrips.length > 0" class="d-flex flex-wrap gap-4 mt-5" style="list-style:none;">
+        <li *ngFor="let trip of filteredTrips">
+          <app-trip-card [trip]="trip"></app-trip-card>
+        </li>
+      </ul>
+      <p *ngIf="filteredTrips && filteredTrips.length === 0">Aucun voyage trouvé.</p>
+    </div>
+  </div>
 </div>
