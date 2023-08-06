@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { User } from '../user.model';
 import { DatePipe } from '@angular/common';
 import { isDefined } from 'src/app/utils';
 import { Router } from '@angular/router';
 import { UserUpdateRequest } from 'src/app/users/user-request.model';
-import { catchError, mergeMap, tap } from 'rxjs/operators';
-import { of, throwError } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { NgForm } from '@angular/forms';
+import { AuthRequest } from 'src/app/auth/auth-request.model';
 
 @Component({
   selector: 'app-account-page',
@@ -20,15 +21,18 @@ export class AccountPageComponent implements OnInit {
 
   user?: User; //Define OnInit until there could be null or undefine
   isEditMode: boolean = false; // Switch Edit mode variable
-  userUpdateRequest: UserUpdateRequest ={};
-  userForm!: NgForm; // Déclarez le formulaire ngForm ici
+  userUpdateRequest: UserUpdateRequest ={}; // value use to send the updateUser$()
+  userForm!: NgForm; 
+
   /**
    * Manage error: 
    * actionError to define if there is an error
    * errorMessage the value to display to the user
    */
   actionError: boolean;
-  errorMessage = "Une erreur s'est produite";
+  errorMessage = "Une erreur s'est produite"; //Default value
+  actionSuccess: boolean;
+  successMessage = "Succès lors de la modification du compte"; //Default value
 
   constructor(
     private authService: AuthService,
@@ -36,12 +40,12 @@ export class AccountPageComponent implements OnInit {
     private router: Router,
   ) {
     this.actionError = false; //Define starting value
-
+    this.actionSuccess = false; //Define starting value
   }
 
   ngOnInit(): void {
     /**
-   * Get the current user
+   * Get the current connected user
    */
   this.authService.getUser$().pipe(
     tap((user) => {
@@ -54,6 +58,7 @@ export class AccountPageComponent implements OnInit {
     })
   ).subscribe();
   }
+
   /**
    * Fonction to transform actual "string" Date into a formated date
    */
@@ -61,6 +66,7 @@ export class AccountPageComponent implements OnInit {
     const dateObj = new Date(date);
     return this.datePipe.transform(dateObj, 'yyyy-MM-dd') || '';
   }
+
   /**
    * 1. Delete the current user
    * 2. Reset authentication to null with logout
@@ -81,6 +87,7 @@ export class AccountPageComponent implements OnInit {
       });
     }
   }
+
   /**
    * Fonction to make the input field editable via the boolean variable
    */
@@ -90,129 +97,125 @@ export class AccountPageComponent implements OnInit {
         // Store the original name and set password to undefine
         // We replace dummy value so we don't send wrong data when change are saved
        this.userUpdateRequest.name = this.user.name;
-       this.userUpdateRequest.password = undefined;
+       this.userUpdateRequest.password = "";
     }
   }
 
    /**
-   * Fonction to update the user data
+   * Function to update the user data
+   * 1: Options: A: change name (Need check name availability) B: No change name
+   * 2: Update User
+   * 3: Update Auth
+   * 4: Close editMode  & Reset displayed data
    */
    saveChanges() {
-
+    console.log("triggered:"+this.userUpdateRequest.name+" "+this.userUpdateRequest.password);
     /**
      * Check that we get the data we need to start the action of saving
      * We need the original authenticated user - for modification
-     * 2nd layer of security: updateRequest should be initialize when edit button is hit & the Form don't allow empty input
-     * 2nd layer of security: button submit should be disable when form is invalid
      */
-    if (!this.user || !this.userUpdateRequest.name || this.userForm.invalid) {
+    if (!this.user || !this.userUpdateRequest.name) {
       this.errorMessage = "Les données nécessaire sont imcomplètes";
       this.actionError = true;
       return;
     }
-  
+     /**
+     * Option A: wish to update the username
+     * We need to check name availability before updating
+     */
     if (this.user.name !== this.userUpdateRequest.name) {
       console.log("le nom a changé");
-      this.authService
-        .checkUserNameExists$(this.userUpdateRequest.name)
-        .pipe(
-          mergeMap((exists: boolean) => {
-            if (exists) {
-              this.errorMessage =
-                'Cet utilisateur existe déjà, choisi un autre nom';
-              return throwError(() => new Error('Cet utilisateur existe déjà'));
-            } else {
-              // 1: If available - Update user
-              console.log("le nom est dispo");
-              return this.authService.updateUser$(this.user!.id, this.userUpdateRequest)
-                .pipe(
-                  catchError((err) => {
-                    console.warn(`Update user failed: ${err.message}`);
-                    return of (null); // Return empty to complete the observable
-                  })
-                );
-            }
-          }),
-          catchError((err) => {
-            console.warn(`Authentication failed: ${err.message}`);
-            return of (null); // Return empty to complete the observable
-          })
-        )
-        .subscribe((updatedUser) => {
-          // 2: Once done - Reset file with new data and disable edit mode
-          console.log("l'user est updaté");
-          if (updatedUser) {
-            this.user = updatedUser;
+      // 1: Check name availability
+      this.authService.checkUserNameExists$(this.userUpdateRequest.name).pipe(
+        switchMap((exists: boolean) => {
+          if (exists) {
+            this.errorMessage = 'Cet utilisateur existe déjà, choisi un autre nom';
+            this.actionError = true;
+            return of(null);// return null to complete observable
+          } else {
+            console.log("le nom est dispo");
+            // 2: Update user if the new name is available
+            return this.authService.updateUser$(this.user!.id, this.userUpdateRequest).pipe(
+              catchError((err) => {
+                console.warn(`Update user failed: ${err.message}`);
+                this.errorMessage = 'Erreur lors de la mise à jour de l\'utilisateur, veuillez réessayer.';
+                this.actionError = true;
+                return of(null);// return null to complete observable
+              })
+            );
           }
-          this.isEditMode = false;
-        });
-    } else if (this.user.name == this.userUpdateRequest.name && (this.userUpdateRequest.password !== null || this.userUpdateRequest.password !== undefined) ) {
-      console.log("le mdp a changé");
-      this.authService.updateUser$(this.user!.id, this.userUpdateRequest).pipe(
+        }),
+        switchMap((updatedUser) => {
+          /**
+           * If the name is available and the user was updated successfully
+           * 3: Update Authentication
+           */
+          if (updatedUser && isDefined(this.userUpdateRequest.name) && isDefined(this.userUpdateRequest.password) ) {
+            //map the input data to friendly user login object
+            const userRefresh: AuthRequest = {username:this.userUpdateRequest.name,password:this.userUpdateRequest!.password };
+            // 4: Disable edit mode
+            this.isEditMode = false; // Disable edit mode here, after the update operation is completed
+            //3: Update Authentication
+            return this.authService.login$(userRefresh).pipe(
+              catchError((err) => {
+                console.warn(`Authentication failed after update: ${err.message}`);
+                // Handle the observable login$() error separately if needed.
+                return of(null); // Null or subscribe to observable login$()
+              })
+            );
+          } else {
+            this.errorMessage = 'Erreur lors de la mise à jour de l\'utilisateur, veuillez réessayer.';
+            this.actionError = true;
+            return of(null);
+          }
+        }),
         catchError((err) => {
-          console.warn(`Update user failed: ${err.message}`);
-          return of (null);
-        })).subscribe((updatedUser) => {
-          // 2: Once done - Reset file with new data and disable edit mode
-          if (updatedUser) {
-            this.user = updatedUser;
-          }
-          this.isEditMode = false;
-        });
+          console.warn(`Authentication failed: ${err.message}`);
+          return []; // empty array to complete observable
+        })
+      ).subscribe((loginResult) => {
+        // Handle the loginResult if needed.
+        if (loginResult) {
+          // Login successful
+          this.actionSuccess = true;
+        }
+      });
     }else{
-      //no change made - juste close editMode
-      this.isEditMode = false;
+      /**
+     * Option B: no username change
+     * 1. We need don't need to check name availability before updating
+     * 2. Update User
+     */
+      this.authService.updateUser$(this.user!.id, this.userUpdateRequest).subscribe({
+        next: (updatedUser) => {
+          if (updatedUser && isDefined(this.userUpdateRequest.name) && isDefined(this.userUpdateRequest.password)) {
+            // map the input data to friendly user login object
+            const userRefresh: AuthRequest = {username: this.userUpdateRequest.name, password: this.userUpdateRequest!.password };
+            // 4: Disable edit mode
+            this.isEditMode = false; // Disable edit mode here, after the update operation is completed
+            // 3: Update Authentication
+            this.authService.login$(userRefresh).subscribe({
+              next: () => {
+                // Success case (optional handling if needed)
+                this.actionSuccess = true;
+              },
+              error: (error) => {
+                // Handle the observable login$() error separately
+                console.warn(`Authentication failed after update: ${error.message}`);
+                // You can handle the error here if needed.
+              }
+            });
+          }
+        },
+        error: (error) => {
+          // Handle the observable updateUser$() error separately
+          console.warn(`Update user failed: ${error.message}`);
+          this.errorMessage = 'Erreur lors de la mise à jour de l\'utilisateur, veuillez réessayer.';
+          this.actionError = true;
+        }
+      });
     }
   }
-  
-
-
-
-
-
-  // saveChanges() {
-
-  //   //si le nom a été modifié il nous faut vérifier la disponibilité du nouveau nom
-  //   if (this.user && this.userUpdateRequest.name && (this.user.name !== this.userUpdateRequest.name)){
-
-  //     this.authService.checkUserNameExists$(this.userUpdateRequest.name).pipe(
-  //       mergeMap((exists: boolean) => {
-  //         if (exists) {
-  //           // Not available: Error
-  //           this.errorMessage = "Cet utilisateur existe déjà, choisi un autre nom";
-  //           return throwError(() => new Error("Cet utilisateur existe déjà"));
-  //         } else {
-  //           // 2: If available - Update user
-  //           return this.authService.updateUser$(this.user!.id,this.userUpdateRequest).subscribe((updatedatedUser) => this.user = updatedatedUser);
-  //           //on devrait aussi récupérer les erreur de l'api lors de l'udate (console.warn /catchError)
-  //         }
-  //       }),
-  //       catchError((err) => {
-  //         //this.registerError = true; // If not initialized inside the pipe the default error message will be displayed
-  //         console.warn(`Authentication failed: ${err.message}`);
-  //         return []; // empty array to complete observable
-  //       })
-  //     ).subscribe({
-  //     next: () => {
-  //      // 4: Once done - Reset file with new data and disable edit mode
-  //      //code pour reste data
-  //      this.isEditMode = false;
-  //     }
-  //   });
-      
-  //     // this.authService.updateUser$(this.user.id,this.userUpdateRequest).subscribe({
-  //     //   next: (user) => {
-
-  //     //   }, error: (err) => { 
-  //     //     this.actionError = true;
-  //     //     this.errorMessage = "Une erreur s'est produite lors de la modification du compte.";
-  //     //     console.warn(`Action failed: ${err.message}`);
-  //     //   }
-  //     // });
-  //   }
-  //   // option 1: le nom est le même mais l'inout du mot de passe n'est pas vide c'est qu'il a changé il nous faut updater l'user
-  //   // option 2:le nom est le même et le champ mot de passe est vide -rien n'as changé on peut juste passer en mode non éditable.
-  // }
 
   /**
    * Cancel action:
@@ -223,17 +226,22 @@ export class AccountPageComponent implements OnInit {
     this.isEditMode = false;
     if (this.user){
       // Restore the original name and password (dummy value) if editing is canceled
-      //this.user.name = this.originalName;
-      //this.originalPassword = "password";
       this.userUpdateRequest.name = this.user.name;
       this.userUpdateRequest.password = "password";
     }
   }
+  /**
+   * Listen to input value: name
+   */
   onNameChange(value: string) {
     this.userUpdateRequest.name = value;
+    console.log("name changed:"+this.userUpdateRequest.name);
   }
-  
+    /**
+   * Listen to input value: password
+   */
   onPasswordChange(value: string) {
     this.userUpdateRequest.password = value;
+    console.log("psw changed:"+this.userUpdateRequest.password);
   }
 }

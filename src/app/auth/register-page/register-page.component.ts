@@ -3,7 +3,7 @@ import { AuthRequest } from 'src/app/auth/auth-request.model';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-import { mergeMap, catchError } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { UserRegisterRequest } from '../../users/user-request.model';
 
@@ -53,24 +53,25 @@ export class RegisterPageComponent {
     const userRegistrationRequest: UserRegisterRequest = { name: this.authRequest.username, password: this.authRequest.password };
     //1: Check user name available
     this.auth.checkUserNameExists$(userRegistrationRequest.name).pipe(
-      mergeMap((exists: boolean) => {
+      switchMap((exists: boolean) => {
         if (exists) {
           // Not available: Error
           this.errorMessage = "Cet utilisateur existe déjà, choisi un autre nom";
           return throwError(() => new Error("Cet utilisateur existe déjà"));
         } else {
           // 2: If available - Create user
-          return this.auth.createUser$(userRegistrationRequest);
-        }
-      }),
-      mergeMap((user) => {
-        if (user) {
-          // 3: Login of the new user (with the element used for the creation - no human error possible here (wrong password etc)
-          return this.auth.login$(this.authRequest);
-        } else {
-          // No user: Error
-          this.errorMessage = "Une erreur c'est produite lors de la création du compte";
-          return throwError(() => new Error("Erreur lors de l'ajout de l'utilisateur"));
+          return this.auth.createUser$(userRegistrationRequest).pipe(
+            switchMap((user) => {
+              if (user) {
+                // 3: Login of the new user (with the element used for the creation - no human error possible here (wrong password etc)
+                return this.auth.login$(this.authRequest);
+              } else {
+                // No user: Error
+                this.errorMessage = "Une erreur c'est produite lors de la création du compte";
+                return throwError(() => new Error("Erreur lors de l'ajout de l'utilisateur"));
+              }
+            })
+          );
         }
       }),
       catchError((err) => {
@@ -80,10 +81,10 @@ export class RegisterPageComponent {
       })
     ).subscribe({
       next: () => {
-       // 4: Once done - Redirect to homepage
+      // 4: Once done - Redirect to homepage
         this.router.navigateByUrl("/");
       }
     });
   }
-  
+
 }

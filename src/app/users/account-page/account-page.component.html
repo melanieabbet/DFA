@@ -24,14 +24,15 @@
                     required
                     minlength="3"
                     maxlength="25"
+                    pattern="^[a-zA-Z0-9\-]*$"
                     #usernameField="ngModel"
                     [(ngModel)]="userUpdateRequest.name"
                     (ngModelChange)="onNameChange($event)"
                     [disabled]="!isEditMode"
                     [ngClass]="{'text-secondary': !isEditMode}"
                 />
-                <p class="position-absolute small m-1 text-danger" *ngIf="(usernameField.hasError('required') || usernameField.hasError('minlength')|| usernameField.hasError('maxlength')) && usernameField.touched">
-                    Mot de 3 à 25 caractères
+                <p class="position-absolute small m-1 text-danger" *ngIf="(usernameField.hasError('required') || usernameField.hasError('minlength')|| usernameField.hasError('pattern')|| usernameField.hasError('maxlength')) && usernameField.touched">
+                    Mot de 3 à 25 caractères [a-z, A-Z, -]
                 </p>
             </div>
             <div>
@@ -41,6 +42,7 @@
                     type="password"
                     name="password"
                     id="password"
+                    required
                     minlength="4"
                     [(ngModel)]="userUpdateRequest.password"
                     [disabled]="!isEditMode"
@@ -48,7 +50,7 @@
                     [ngClass]="{'text-secondary': !isEditMode}"
                     (ngModelChange)="onPasswordChange($event)"
                 />
-                <p class="position-absolute small m-1 text-danger" *ngIf=" passwordField.hasError('minlength')||passwordField.hasError('maxlength')&& passwordField.touched">
+                <p class="position-absolute small m-1 text-danger" *ngIf=" passwordField.hasError('minlength')|| passwordField.hasError('required')||passwordField.hasError('maxlength')&& passwordField.touched">
                     Minimum 4 caractères
                 </p>
             </div>
@@ -61,6 +63,9 @@
         </form>
         <div *ngIf="actionError" class="col-12 d-flex justify-content-center my-5">
             <p class="bg-danger text-light text-center py-2 px-5">{{ errorMessage }}</p>
+        </div>
+        <div *ngIf="actionSuccess" class="col-12 d-flex justify-content-center my-5">
+            <p class="bg-success text-light text-center py-2 px-5">{{ successMessage }}</p>
         </div>
     </div>
 </div>

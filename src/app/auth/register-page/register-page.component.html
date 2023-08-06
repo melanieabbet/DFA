@@ -18,11 +18,12 @@
               #usernameField="ngModel"
               required
               minlength="3" 
-              maxlength="25" 
+              maxlength="25"
+              pattern="^[a-zA-Z0-9\-]*$"
               [(ngModel)]="authRequest.username"
             />
-            <p class="position-absolute small m-1 text-danger" *ngIf="(usernameField.hasError('required')||usernameField.hasError('minlength')||usernameField.hasError('maxlength')) && usernameField.touched">
-              Identifiant obligatoire <br> (3 à 25 caractères)
+            <p class="position-absolute small m-1 text-danger" *ngIf="(usernameField.hasError('required')||usernameField.hasError('minlength')||usernameField.hasError('pattern')||usernameField.hasError('maxlength')) && usernameField.touched">
+                Mot de 3 à 25 caractères [a-z, A-Z, -]
             </p>
           </div>
           <div>
@@ -38,7 +39,7 @@
               [(ngModel)]="authRequest.password"
             />
             <p class="position-absolute small m-1 text-danger" *ngIf="(passwordField.hasError('required')||passwordField.hasError('minlength')) && passwordField.touched">
-            Mot de passe obligatoire <br> (minimum 4 caractères)
+                Minimum 4 caractères
             </p>
           </div>
           <div>

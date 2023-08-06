@@ -62,7 +62,7 @@ export class LoginPageComponent {
                 // default
                 this.errorMessage = "Une erreur s'est produite lors de l'authentification.";
             }
-          }else {
+          }else{
             // default
             this.errorMessage = "Une erreur s'est produite lors de l'authentification.";
           }
