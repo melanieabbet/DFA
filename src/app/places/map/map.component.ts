@@ -175,7 +175,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         icon: defaultIcon,
         title: place.name, // name of the place
         description: place.description, // Description of place
-        photo: place.pictureUrl, // picture if there
+        picture: place.pictureUrl, // picture if there
         tripId: place.tripId // Id use later for action see trip
       };
 
@@ -185,12 +185,15 @@ export class MapComponent implements OnInit, AfterViewInit {
       // We need to expend the Marker Options with CustomMarkerOptions to add custom value
       const description = (marker.options as CustomMarkerOptions)?.description;
       const tripId = (marker.options as CustomMarkerOptions)?.tripId;
+       // Check if the picture exists or use the default image URL
+       const pictureUrl = place.pictureUrl ? place.pictureUrl : 'https://media.istockphoto.com/id/1373024887/de/vektor/karten-pin-icon-mit-langem-schatten-auf-leerem-hintergrund-flat-design.jpg?s=612x612&w=0&k=20&c=E09D9kCH8kkqEQoxS3llgN3nRNDfsQxAFf4llj6zq2g=';
       //Popup template
       const popupContent = `
         <div #mappopup class="map-popup">
-          <h3 class=""><strong>${title}</strong></h3>
-          <p>${description}</p> 
-          <button class="details-link btn btn-secondary btn-sm" data-tripId="${tripId}"><i class="bi bi-plus-lg pe-1"></i>Détails</button>  
+          <img src="${pictureUrl}" alt="Image du voyage" class="w-100 pb-1">
+          <h3 class="mb-1"><strong>${title}</strong></h3>
+          <p class="m-0 mb-2">${description}</p> 
+          <button class="details-link btn btn-primary" data-tripId="${tripId}">Détails</button>  
         </div>
       `;
       this.attachPopupToMarker(marker, popupContent);

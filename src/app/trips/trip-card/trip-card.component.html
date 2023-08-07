@@ -1,7 +1,13 @@
 <div class="card shadow border-0" style="width: 18rem;">
-    <div class="card-body">
-        <h2>{{trip.title}}</h2>
-        <p class="card-text">{{trip.description}}</p>
-        <a [routerLink]="['/trips', trip.id]" class="btn btn-secondary btn-sm"><i class="bi bi-plus-lg pe-1"></i>Détails</a>
+    <div class="card-header p-0">
+      <div class="image-container">
+        <img [src]="tripImage" alt="Image du voyage">
+        <div class="badge bg-dark p-2"><i class="bi bi-geo-alt-fill me-2"></i>{{ trip.placesCount }}</div>
+      </div>
     </div>
-</div>
+    <div class="card-body">
+      <h2>{{trip.title}}</h2>
+      <p class="card-text">{{trip.description}}</p>
+      <a [routerLink]="['/trips', trip.id]" class="btn btn-primary">Détails</a>
+    </div>
+  </div>
