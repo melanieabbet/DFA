@@ -25,6 +25,7 @@ export class TripPageComponent {
   tripOwnedByUser = false;
   @Input({ required: true }) trip?: Trip;
   formModal: any;
+  oneAtATime = true;
 
   constructor(
     private route: ActivatedRoute,

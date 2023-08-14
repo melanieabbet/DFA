@@ -20,7 +20,7 @@
         <button class="btn btn-primary  ms-3" (click)="showAddPlaceModal()">Ajouter un lieu</button>
     </div>
     <div *ngIf="trip" class="row">
-        <accordion [isAnimated]="true" class="col-6">
+        <accordion [isAnimated]="true" [closeOthers]="oneAtATime" class="col-6">
             <ng-container *ngFor="let place of places">
                 <app-place-card [place]="place" [tripOwnedByUser]="tripOwnedByUser" (placeDeleted)="onPlaceDeleted($event)" (placeEdited)="loadPlace()"></app-place-card>
             </ng-container>

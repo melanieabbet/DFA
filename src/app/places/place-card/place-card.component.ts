@@ -1,10 +1,11 @@
 import { Component,EventEmitter,Input, Output } from '@angular/core';
-import { Place, PlaceRequest } from '../place.model';
+import { Place } from '../place.model';
 import { PlaceService } from '../place.service';
 import { isDefined } from 'src/app/utils';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { EditPlaceModalComponent } from '../edit-place-modal/edit-place-modal.component';
 import { BooleanInput } from 'ngx-bootstrap/focus-trap/boolean-property';
+import { MapService } from '../map/map.service';
 
 
 @Component({
@@ -17,8 +18,20 @@ export class PlaceCardComponent {
   @Input() tripOwnedByUser: BooleanInput;
   @Output() placeDeleted = new EventEmitter<string>();
   @Output() placeEdited = new EventEmitter<boolean>();
+
+  selectedPlaceId: string | null = null; // check if user come from map Marker
+  openedAccordionId: string | null = null; // define which item has to be open
+
   formModal: any;
-  constructor (private readonly placeService: PlaceService,  private bsModalService: BsModalService){
+  constructor (private mapService: MapService, private readonly placeService: PlaceService,  private bsModalService: BsModalService){
+    /**
+   * Listen to selected item in case user come from the map Marker
+   */
+    this.mapService.getSelectedPlaceId().subscribe(selectedPlaceId => {
+      if (selectedPlaceId !== null) {
+        this.openedAccordionId = selectedPlaceId;
+      }
+    });
   }
   delete(): void {
     if (isDefined(this.place.id)) {
@@ -51,7 +64,13 @@ export class PlaceCardComponent {
       }
     }
   }
-  
-
-
+  /**
+   * Function to open the right item of the accordion
+   * For example if a value is emitted from the map (on click)
+   */
+  openAccordion(placeId: string): void {
+    this.selectedPlaceId = placeId;
+    this.mapService.setSelectedPlaceId(placeId);
+      console.log(this.selectedPlaceId+"doit être ouvert now");
+  }
 }

@@ -6,6 +6,7 @@ import { Trip, TripService } from 'src/app/trips/trip.service';
 import { CustomMarkerOptions } from './custom-marker-options';
 import { Geolocation } from 'src/app/utils';
 import { Router } from '@angular/router';
+import { MapService } from './map.service';
 
 @Component({
   selector: 'app-map',
@@ -18,10 +19,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   mapMarkers: Marker[];
   map: Map | undefined;
   trips: Trip[] = []; // list use for all current user trip
-  selectedTripId: string | null = null; // ID of selected
+  selectedTripId: string | null = null; // ID of selected 
   searchText: string = ''; // input text value
-  existPlaces: boolean;
-  constructor(private placeService: PlaceService, private tripService: TripService, private router: Router,private ngZone: NgZone){
+  existPlaces: boolean; // to display to the user if no places exist
+  constructor(private mapService: MapService, private placeService: PlaceService, private tripService: TripService, private router: Router,private ngZone: NgZone){
     this.mapOptions = {
       layers: [
         tileLayer(
@@ -37,10 +38,10 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-  /**
+     /**
    * Get all current user Trip for input select
    */
-    this.tripService.getCurrentUserTrips().subscribe((trips: Trip[]) => {
+     this.tripService.getCurrentUserTrips().subscribe((trips: Trip[]) => {
       this.trips = trips;
     });
 
@@ -77,7 +78,10 @@ export class MapComponent implements OnInit, AfterViewInit {
     const target = event.target as HTMLElement;
     if (target && target.classList.contains('details-link')) {
       const tripId = target.dataset['tripid']; // Get the tripId from the link's text
-
+      const placeId = target.dataset['placeid']; // Get the placeId from the link's text
+      if (placeId) {
+        this.mapService.setSelectedPlaceId(placeId); // Inform the mapService about the selected place (listened by accordion item)
+      }
       // Use ngZone.run() to navigate within the Angular zone.
       this.ngZone.run(() => {
         // Use the Router service to navigate to the trip details page
@@ -176,7 +180,8 @@ export class MapComponent implements OnInit, AfterViewInit {
         title: place.name, // name of the place
         description: place.description, // Description of place
         picture: place.pictureUrl, // picture if there
-        tripId: place.tripId // Id use later for action see trip
+        tripId: place.tripId, // Id use later for action see trip
+        id: place.id // Id used to link to accordion item
       };
 
       const marker = this.createMarker(this.convertToLatLng(place.location.coordinates), markerOptions);
@@ -184,7 +189,8 @@ export class MapComponent implements OnInit, AfterViewInit {
       const title = marker.options.title;
       // We need to expend the Marker Options with CustomMarkerOptions to add custom value
       const description = (marker.options as CustomMarkerOptions)?.description;
-      const tripId = (marker.options as CustomMarkerOptions)?.tripId;
+      const tripId = (marker.options as CustomMarkerOptions)?.tripId; // useful to link to correct trip page
+      const id = (marker.options as CustomMarkerOptions).id; // useful to define which accordion item to open
        // Check if the picture exists or use the default image URL
        const pictureUrl = place.pictureUrl ? place.pictureUrl : 'https://media.istockphoto.com/id/1373024887/de/vektor/karten-pin-icon-mit-langem-schatten-auf-leerem-hintergrund-flat-design.jpg?s=612x612&w=0&k=20&c=E09D9kCH8kkqEQoxS3llgN3nRNDfsQxAFf4llj6zq2g=';
       //Popup template
@@ -193,7 +199,7 @@ export class MapComponent implements OnInit, AfterViewInit {
           <img src="${pictureUrl}" alt="Image du voyage" class="w-100 pb-1">
           <h3 class="mb-1"><strong>${title}</strong></h3>
           <p class="m-0 mb-2">${description}</p> 
-          <button class="details-link btn btn-primary" data-tripId="${tripId}">Détails</button>  
+          <button class="details-link btn btn-primary" data-placeId="${id}" data-tripId="${tripId}">Détails</button>  
         </div>
       `;
       this.attachPopupToMarker(marker, popupContent);
