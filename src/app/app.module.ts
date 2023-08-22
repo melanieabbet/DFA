@@ -27,6 +27,7 @@ import { MapComponent } from './places/map/map.component';
 import { MapPopupComponent } from './places/map-popup/map-popup.component';
 import { EditPlaceModalComponent } from './places/edit-place-modal/edit-place-modal.component';
 import { AccountPageComponent } from './users/account-page/account-page.component';
+import { TripMapComponent } from './places/map/trip-map.component';
 
 
 
@@ -47,6 +48,7 @@ import { AccountPageComponent } from './users/account-page/account-page.componen
     EditTripModalComponent,
     NewPlaceModalComponent,
     MapComponent,
+    TripMapComponent,
     MapPopupComponent,
     EditPlaceModalComponent,
     AccountPageComponent

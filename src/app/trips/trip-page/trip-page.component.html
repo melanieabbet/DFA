@@ -25,8 +25,8 @@
                 <app-place-card [place]="place" [tripOwnedByUser]="tripOwnedByUser" (placeDeleted)="onPlaceDeleted($event)" (placeEdited)="loadPlace()"></app-place-card>
             </ng-container>
         </accordion>
-        <div class="col-6">
-            <p>teslus hfér wfhérw fewuhféewf</p>
+        <div class="col-6" *ngIf="tripId">
+            <app-trip-map [tripId]="tripId"></app-trip-map> 
         </div>
     </div>
 </div>
