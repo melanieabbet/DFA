@@ -2,6 +2,7 @@ import { Component,EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Place, PlaceRequest } from '../place.model';
 import { PlaceService } from '../place.service';
+import { MapService } from '../map/map.service';
 
 @Component({
   selector: 'app-edit-place-modal',
@@ -13,7 +14,7 @@ export class EditPlaceModalComponent implements OnInit{
   originalName = "";
   placeId ="";
   @Output() placeModified = new EventEmitter<boolean>();
-  constructor(readonly modalRef: BsModalRef, private placeService: PlaceService,) {
+  constructor(readonly modalRef: BsModalRef, private placeService: PlaceService, private mapService:MapService) {
 
   }
   ngOnInit(): void {
@@ -42,12 +43,13 @@ export class EditPlaceModalComponent implements OnInit{
   emitModifiedPlace(placeData: PlaceRequest): void {
 
     this.placeService.updatePlace(this.placeId, placeData).subscribe({
-      next: (places) => {
-        if (places) {
+      next: (newPlace: Place) => {
+        if (newPlace) {
           // Fermer la modale
           this.modalRef.hide();
           // Émettre un événement indiquant qu'un lieu a été modifié
           this.placeModified.emit(true);
+          this.mapService.updatePlaceDetails(newPlace);
         }
       },
       error: () => {

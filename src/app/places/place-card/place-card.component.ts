@@ -1,4 +1,4 @@
-import { Component,EventEmitter,Input, Output } from '@angular/core';
+import { Component,EventEmitter,Input, Output, OnDestroy,  NgZone, ChangeDetectorRef  } from '@angular/core';
 import { Place } from '../place.model';
 import { PlaceService } from '../place.service';
 import { isDefined } from 'src/app/utils';
@@ -6,6 +6,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { EditPlaceModalComponent } from '../edit-place-modal/edit-place-modal.component';
 import { BooleanInput } from 'ngx-bootstrap/focus-trap/boolean-property';
 import { MapService } from '../map/map.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -13,25 +14,44 @@ import { MapService } from '../map/map.service';
   templateUrl: './place-card.component.html',
   styleUrls: ['./place-card.component.scss']
 })
-export class PlaceCardComponent {
+export class PlaceCardComponent implements OnDestroy {
   @Input({required:true}) place!: Place;
   @Input() tripOwnedByUser: BooleanInput;
   @Output() placeDeleted = new EventEmitter<string>();
   @Output() placeEdited = new EventEmitter<boolean>();
+  private subscription: Subscription | undefined; 
 
   selectedPlaceId: string | null = null; // check if user come from map Marker
   openedAccordionId: string | null = null; // define which item has to be open
 
   formModal: any;
-  constructor (private mapService: MapService, private readonly placeService: PlaceService,  private bsModalService: BsModalService){
+
+  constructor (
+    private mapService: MapService,
+    private readonly placeService: PlaceService,
+    private bsModalService: BsModalService,
+    private ngZone: NgZone, // Need to avoid delayed or miscommunication with map
+    private cdr: ChangeDetectorRef // Need to avoid delayed or miscommunication with map
+    ){
     /**
    * Listen to selected item in case user come from the map Marker
    */
-    this.mapService.getSelectedPlaceId().subscribe(selectedPlaceId => {
-      if (selectedPlaceId !== null) {
-        this.openedAccordionId = selectedPlaceId;
-      }
+    this.subscription = this.mapService.getSelectedPlaceId().subscribe(selectedPlaceId => {
+      this.ngZone.run(() => {
+        if (selectedPlaceId !== null) {
+          this.openedAccordionId = selectedPlaceId;
+          this.cdr.detectChanges(); // Force change detection
+        }
+      });
     });
+  }
+  /**
+   * Destroy subscription when item is not displayed to avoid surcharge
+   */
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
   delete(): void {
     if (isDefined(this.place.id)) {
@@ -48,6 +68,8 @@ export class PlaceCardComponent {
   onDeletePlace(): void {
     // Output l'événement avec l'ID du lieu supprimé
     this.placeDeleted.emit(this.place.id);
+    //Update map marker
+    this.mapService.deletePlace(this.place.id);
   }
   showEditModal(): void {
     if (isDefined(this.place)) {
@@ -63,14 +85,5 @@ export class PlaceCardComponent {
         });
       }
     }
-  }
-  /**
-   * Function to open the right item of the accordion
-   * For example if a value is emitted from the map (on click)
-   */
-  openAccordion(placeId: string): void {
-    this.selectedPlaceId = placeId;
-    this.mapService.setSelectedPlaceId(placeId);
-      console.log(this.selectedPlaceId+"doit être ouvert now");
   }
 }

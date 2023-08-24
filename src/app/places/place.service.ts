@@ -47,19 +47,19 @@ export class PlaceService {
   getThisTripPlaces(tripId: string):  Observable<Place[]>{
     return this.http.get<Place[]>(`${environment.apiUrl}/places?trip=${tripId}`);
   }
-  postPlace(newPlace: PlaceRequest): Observable<PlaceRequest[]> {
-    return this.http.post<Place[]>(`${environment.apiUrl}/places`,newPlace);
+  postPlace(newPlace: PlaceRequest): Observable<Place> {
+    return this.http.post<Place>(`${environment.apiUrl}/places`,newPlace);
   }
   deletePlace(id: string): Observable<Place> {
     return this.http.delete<Place>(`${environment.apiUrl}/places/${id}`);
-  } // supp observable ne change rien je crois
+  } 
   checkPlaceNameExists(placeName: string): Observable<boolean> {
     return this.http.get<Place[]>(`${environment.apiUrl}/places?name=${placeName}`).pipe(
       map((places: Place[]) => places.length > 0)
     );
   }
-  updatePlace(id:string, updatedPlace: PlaceRequest): Observable<PlaceRequest[]> {
-    return this.http.patch<Place[]>(`${environment.apiUrl}/places/${id}`,updatedPlace);
+  updatePlace(id:string, updatedPlace: PlaceRequest): Observable<Place> {
+    return this.http.patch<Place>(`${environment.apiUrl}/places/${id}`,updatedPlace);
   }
 
 }
