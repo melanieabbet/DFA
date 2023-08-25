@@ -1,4 +1,4 @@
-import { Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit} from '@angular/core';
 import { MapService } from '../map/map.service'; 
 import { Place, PlaceService } from '../place.service';
 import { latLng, MapOptions, tileLayer, marker, Marker, Map, LatLngExpression } from 'leaflet';
@@ -12,17 +12,18 @@ import { Subscription } from 'rxjs'; // Import Subscription for change on places
   templateUrl: './trip-map.component.html',
   styleUrls: ['./trip-map.component.scss']
 })
-export class TripMapComponent implements OnInit {
+export class TripMapComponent implements OnInit, OnDestroy{
   @Input({ required: true }) tripId!: string;
   mapOptions: MapOptions;
   mapMarkers: Marker[];
   map: Map | undefined;
-  existPlaces: boolean;
+  existPlaces: boolean; // to display to the user if no places exist
   enlargedMarker: Marker | null = null; // To rest old clicked marker once a new one is selected
-  selectedPlaceId: string | null = null;
-  placeAddedSubscription: Subscription | undefined; // Subscription for placeAdded$
-  placeDeletedSubscription: Subscription | undefined; // Subscription for placeDeleted$
-  placeUpdatedSubscription: Subscription | undefined; // Subscription for placeDeleted$
+  //selectedPlaceId: string | null = null;
+  private placeAddedSubscription: Subscription | undefined; // Subscription for placeAdded$
+  private placeDeletedSubscription: Subscription | undefined; // Subscription for placeDeleted$
+  private placeUpdatedSubscription: Subscription | undefined; // Subscription for placeDeleted$
+  private placeActivatedSubscription: Subscription | undefined; // Subscription for placeActivated$
 
   constructor(private mapService: MapService, private placeService: PlaceService) {
     this.mapOptions = {
@@ -46,7 +47,9 @@ export class TripMapComponent implements OnInit {
     this.map = map;
     this.loadMarkersAndCenter();
   }
-
+/**
+   * Subscribe to event that will impact markers
+   */
   ngOnInit() {
     // Souscrivez au flux placeAdded$
     this.placeAddedSubscription = this.mapService.placeAdded$.subscribe((place: Place) => {
@@ -60,7 +63,14 @@ export class TripMapComponent implements OnInit {
     this.placeDeletedSubscription = this.mapService.placeUpdated$.subscribe((place: Place) => {
         this.updateMarker(place);
     });
+    // Subscribe to changes in the selected place's ID
+    this.placeActivatedSubscription = this.mapService.placeActivated$.subscribe(selectedPlaceId => {
+        this.updateActiveMarker(selectedPlaceId);
+      });
   }
+  /**
+   * On hide or delete end subscription to avoid overload
+   */
   ngOnDestroy() {
     // unsubscribe when destroyed to avoid overload
     if (this.placeAddedSubscription) {
@@ -72,8 +82,13 @@ export class TripMapComponent implements OnInit {
     if (this.placeUpdatedSubscription) {
         this.placeUpdatedSubscription.unsubscribe();
     }
+    if (this.placeActivatedSubscription) {
+        this.placeActivatedSubscription.unsubscribe();
+      }
   }
-
+/**
+   * Function to initiate the markers already existing and display, center them on the map
+   */
   private loadMarkersAndCenter() {
      // get the trip places
     this.placeService.getThisTripPlaces(this.tripId).subscribe((places: Place[]) => {
@@ -81,11 +96,16 @@ export class TripMapComponent implements OnInit {
         //center the places on the map if existing
       if (this.mapMarkers.length > 0 && this.map) {
         this.centerMapOnMarker(this.mapMarkers[0]);
+        this.existPlaces = true;
+      } else {
+        this.existPlaces = false;
       }
 
     });
   }
-
+/**
+   * Function to create already existing markers with the element return by the fonction cretaeMarker()
+   */
   private createMarkers(places: any[]): Marker[] {
     const markers: Marker[] = [];
     places.forEach(place => {
@@ -100,20 +120,15 @@ export class TripMapComponent implements OnInit {
         if (this.enlargedMarker) {
           this.resetMarkerSize(this.enlargedMarker);
         }
-  
-        // Set size of actual clicked marker
-        this.enlargeMarker(marker);
-        this.enlargedMarker = marker;
-        // set the selected place id to link with the accordion in order to open the correct accordion-item
-        this.mapService.setSelectedPlaceId(place.id); //test 01
-       console.log(place.id);
+        // set the active place id to link with the accordion in order 
+        this.mapService.setActivePlace(place.id);
+        //console.log(place.id);
       });
 
       markers.push(marker);
     });
     return markers;
   }
-
   private createMarker(latLng: LatLngExpression, options: any): Marker {
     return marker(latLng, options);
   }
@@ -123,10 +138,12 @@ export class TripMapComponent implements OnInit {
       this.map.panTo(marker.getLatLng());
     }
   }
-
   private convertToLatLng(coordinates: [number, number]): LatLngExpression {
     return latLng(coordinates[0], coordinates[1]);
   }
+/**
+   * Functions used to emphasizes the active/inactive marker 
+   */
   private enlargeMarker(marker: Marker) {
     marker.setIcon(L.icon({
         iconSize: [40, 65], // Wished size
@@ -138,6 +155,9 @@ export class TripMapComponent implements OnInit {
   private resetMarkerSize(marker: Marker) {
     marker.setIcon(defaultIcon);
   }
+/**
+   * Functions to call when change in already existing markers or new marker
+   */
   private addMarker(place: Place): void {
     const markerOptions = {
       icon: defaultIcon,
@@ -150,12 +170,8 @@ export class TripMapComponent implements OnInit {
       if (this.enlargedMarker) {
         this.resetMarkerSize(this.enlargedMarker);
       }
-
-      // Set size of actual clicked marker
-      this.enlargeMarker(marker);
-      this.enlargedMarker = marker;
-      // set the selected place id to link with the accordion in order to open the correct accordion-item
-      this.mapService.setSelectedPlaceId(place.id); //test 01
+      // set the active place id to link with the accordion 
+      this.mapService.setActivePlace(place.id);
      console.log(place.id);
     });
 
@@ -163,6 +179,8 @@ export class TripMapComponent implements OnInit {
 
     if (this.map) {
       this.map.addLayer(marker); // the new marker will be in a new layer
+      this.centerMapOnMarker(marker);
+      this.existPlaces = true;
     }
   }
 
@@ -174,6 +192,9 @@ export class TripMapComponent implements OnInit {
       //remove the layer of the place to delete
       if (this.map) {
         this.map.removeLayer(removedMarker);
+        if (this.mapMarkers.length <= 0) {
+            this.existPlaces = false;
+          }
       }
     }
   }
@@ -193,4 +214,17 @@ export class TripMapComponent implements OnInit {
       this.map?.addLayer(updatedMarker);
     }
   }
+/**
+   * Function to update the active marker (marker's size - center) based on the selected place
+   */
+private updateActiveMarker(selectedPlaceId: string | null): void {
+    this.mapMarkers.forEach(marker => {
+        if ((marker.options as CustomMarkerOptions).id === selectedPlaceId) {
+        this.enlargeMarker(marker);
+        this.centerMapOnMarker(marker);
+        } else {
+        this.resetMarkerSize(marker);
+        }
+    });
+}
 }

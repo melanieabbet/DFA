@@ -1,1 +1,4 @@
 <div id="singlemap" style="height: 400px;" leaflet [leafletOptions]="mapOptions" [leafletLayers]="mapMarkers" (leafletMapReady)="onMapReady($event)"></div>
+<div *ngIf="!existPlaces" class="center-message bg-dark text-light p-5 rounded">
+    <p class="mb-0 fs-3 fw-bold">Aucun lieu à afficher</p>
+  </div>

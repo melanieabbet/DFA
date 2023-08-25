@@ -101,7 +101,6 @@ export class TripPageComponent {
     if(this.tripId){
       this.placeService.getThisTripPlaces(this.tripId).subscribe((places)=> {this.places = places;})
     };
-    //améliorer pour ne mettre a jour que la nouvelle place?
   }
   showAddPlaceModal(): void {
     this.formModal = this.bsModalService.show(NewPlaceModalComponent, {

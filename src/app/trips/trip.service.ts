@@ -37,7 +37,7 @@ export class TripService {
     return this.http.get<Trip>(`${environment.apiUrl}/trips/${id}`);
   }
 
-  postTrip(newTrip: TripRequest): Observable<TripRequest[]> {
+  postTrip(newTrip: TripRequest): Observable<Trip[]> {
     return this.http.post<Trip[]>(`${environment.apiUrl}/trips`,newTrip);
   }
 

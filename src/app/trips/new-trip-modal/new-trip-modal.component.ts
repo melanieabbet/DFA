@@ -10,7 +10,6 @@ import { TripService } from '../trip.service';
 })
 export class NewTripModalComponent {
   constructor(readonly modalRef: BsModalRef, private tripService: TripService,) {
-
   }
 
   createNewTrip(tripData: TripRequest): void {
@@ -26,7 +25,7 @@ export class NewTripModalComponent {
               //fermez la modale
               this.modalRef.hide();
               // Une fois l'ajout terminé avec succès, émettre un événement indiquant qu'un nouveau voyage a été ajouté
-              // this.tripAdded.emit(true);
+              //this.tripAdded.emit(true);
             }
           }, error: () => {
             alert("Erreur lors de l'ajout du voyage");

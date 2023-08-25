@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Place } from '../place.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
-  private selectedPlaceId = new BehaviorSubject<string | null>(null); // connection with accordion item
-  // Observable to listen for new places
   private placeAddedSource = new Subject<Place>();
   placeAdded$ = this.placeAddedSource.asObservable();
   // Observable to listen for deleted places
@@ -16,23 +14,21 @@ export class MapService {
   // Observable to listen for updates to a specific place's details
   private placeUpdatedSource = new Subject<Place>();
   placeUpdated$ = this.placeUpdatedSource.asObservable();
+  // Observable to listen for active place
+  private placeActivatedSource = new BehaviorSubject<string | null>(null);
+  placeActivated$ = this.placeActivatedSource.asObservable();
 
-   /**
-   * Make the link between map and accordion item
-   * (set the clicked item and return an observable)
-   */
-  setSelectedPlaceId(id: string): void {
-    this.selectedPlaceId.next(id);
-  }
-  getSelectedPlaceId(): Observable<string | null> {
-    return this.selectedPlaceId.asObservable();
-  }
+  
   /**
-   * manage changes
-   * added places
-   * deleted places
-   * update places
+   * manage changes with observable
+   * active place
+   * added place
+   * deleted place
+   * update place
    */
+  setActivePlace(id: string | null) {
+    this.placeActivatedSource.next(id);
+  }
   addPlace(place: Place) {
     this.placeAddedSource.next(place);
   }
@@ -42,5 +38,4 @@ export class MapService {
   updatePlaceDetails(updatedPlace: Place) {
     this.placeUpdatedSource.next(updatedPlace);
   } 
-
 }

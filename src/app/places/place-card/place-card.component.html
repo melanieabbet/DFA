@@ -1,4 +1,4 @@
-<accordion-group heading="{{place.name}}"panelClass="customClass" #accordionItem  [id]="place.id" [isOpen]="openedAccordionId === place.id" >
+<accordion-group heading="{{place.name}}"panelClass="customClass" #accordionItem  [id]="place.id" [isOpen]="openedAccordionId === place.id" (isOpenChange)="accordionPanelOpened($event, place.id)">
     <div class="row">
         <div class="col-4">
             <img class="placeimg" *ngIf="place.pictureUrl; else defaultImage" src="{{place.pictureUrl}}" alt="{{ place.name }}">

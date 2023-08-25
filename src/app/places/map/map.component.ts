@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, NgZone, OnInit, ViewChild,ElementRef } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnInit, ViewChild,ElementRef, Input, OnChanges, SimpleChanges  } from '@angular/core';
 import { defaultIcon } from './default-marker';
 import { latLng, MapOptions, tileLayer, marker, Marker, Map, LatLngExpression } from 'leaflet';
 import { Place, PlaceService } from '../place.service';
@@ -13,12 +13,12 @@ import { MapService } from './map.service';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit, AfterViewInit {
+export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('mappopup') mappopup?: ElementRef; // Reference to the popup element in the template. undefine till creation of the marker
   mapOptions: MapOptions;
   mapMarkers: Marker[];
   map: Map | undefined;
-  trips: Trip[] = []; // list use for all current user trip
+  @Input() trips?: Trip[]; 
   selectedTripId: string | null = null; // ID of selected 
   searchText: string = ''; // input text value
   existPlaces: boolean; // to display to the user if no places exist
@@ -38,16 +38,6 @@ export class MapComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-     /**
-   * Get all current user Trip for input select
-   */
-     this.tripService.getCurrentUserTrips().subscribe((trips: Trip[]) => {
-      this.trips = trips;
-    });
-
-    /**
-   * Get all current user places to display on the map
-   */
     this.placeService.getCurrentUserPlaces().subscribe((places: Place[]) => {
       // Transform places into marker
       this.mapMarkers = this.createMarkersWithPopups(places);
@@ -57,6 +47,12 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.existPlaces = false;
       }
     });
+  }
+    /**
+   * Lifecycle hook - To stay tuned when trips list from parent component change
+   */
+  ngOnChanges(changes: SimpleChanges) {
+    //Used for update on the select input options
   }
 
   // Initializes the click event listener for the popup link after the view is fully initialized.
@@ -80,15 +76,14 @@ export class MapComponent implements OnInit, AfterViewInit {
       const tripId = target.dataset['tripid']; // Get the tripId from the link's text
       const placeId = target.dataset['placeid']; // Get the placeId from the link's text
       if (placeId) {
-        this.mapService.setSelectedPlaceId(placeId); // Inform the mapService about the selected place (listened by accordion item)
+        // set the active place id to link with the accordion 
+        this.mapService.setActivePlace(placeId);
       }
       // Use ngZone.run() to navigate within the Angular zone.
       this.ngZone.run(() => {
         // Use the Router service to navigate to the trip details page
         this.router.navigate(['/trips', tripId]);
       });
-  
-      console.log("Clicked:"+tripId);
     }
   }
   
@@ -216,7 +211,6 @@ export class MapComponent implements OnInit, AfterViewInit {
 
     return markers;
   }
-
   private createMarker(latLng: LatLngExpression, options: any): Marker {
     return marker(latLng, options);
   }

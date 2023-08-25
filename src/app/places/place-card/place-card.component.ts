@@ -1,4 +1,4 @@
-import { Component,EventEmitter,Input, Output, OnDestroy,  NgZone, ChangeDetectorRef  } from '@angular/core';
+import { Component,EventEmitter,Input, Output, OnDestroy,  NgZone, ChangeDetectorRef, OnInit  } from '@angular/core';
 import { Place } from '../place.model';
 import { PlaceService } from '../place.service';
 import { isDefined } from 'src/app/utils';
@@ -14,15 +14,17 @@ import { Subscription } from 'rxjs';
   templateUrl: './place-card.component.html',
   styleUrls: ['./place-card.component.scss']
 })
-export class PlaceCardComponent implements OnDestroy {
+export class PlaceCardComponent implements OnInit, OnDestroy {
   @Input({required:true}) place!: Place;
   @Input() tripOwnedByUser: BooleanInput;
   @Output() placeDeleted = new EventEmitter<string>();
   @Output() placeEdited = new EventEmitter<boolean>();
-  private subscription: Subscription | undefined; 
 
-  selectedPlaceId: string | null = null; // check if user come from map Marker
   openedAccordionId: string | null = null; // define which item has to be open
+
+  private previousPanelState = false; // To avoid muliple call on accordionPanelOpene() if a marker is clicked
+  private placeActivatedSubscription: Subscription | undefined; // Subscription for placeActivated$ for action on marker
+
 
   formModal: any;
 
@@ -32,25 +34,25 @@ export class PlaceCardComponent implements OnDestroy {
     private bsModalService: BsModalService,
     private ngZone: NgZone, // Need to avoid delayed or miscommunication with map
     private cdr: ChangeDetectorRef // Need to avoid delayed or miscommunication with map
-    ){
-    /**
-   * Listen to selected item in case user come from the map Marker
-   */
-    this.subscription = this.mapService.getSelectedPlaceId().subscribe(selectedPlaceId => {
+    ){}
+
+  ngOnInit(): void {
+    // Subscribe to changes in the selected place's ID
+    this.placeActivatedSubscription = this.mapService.placeActivated$.subscribe(selectedPlaceId => {
       this.ngZone.run(() => {
-        if (selectedPlaceId !== null) {
-          this.openedAccordionId = selectedPlaceId;
-          this.cdr.detectChanges(); // Force change detection
-        }
-      });
+            if (selectedPlaceId !== null) {
+              this.openedAccordionId = selectedPlaceId;
+              this.cdr.detectChanges(); // Force change detection
+            }
+          });
     });
   }
   /**
    * Destroy subscription when item is not displayed to avoid surcharge
    */
   ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+    if (this.placeActivatedSubscription) {
+      this.placeActivatedSubscription.unsubscribe();
     }
   }
   delete(): void {
@@ -81,9 +83,19 @@ export class PlaceCardComponent implements OnDestroy {
       if (this.formModal) {
         this.formModal.onHidden.subscribe(() => {
           this.placeEdited.emit(true);
-          console.log("MAJ")
         });
       }
     }
   }
+
+  accordionPanelOpened(isOpen: boolean, panelId: string): void {
+    if (isOpen && !this.previousPanelState) {
+      this.previousPanelState = true;
+      this.mapService.setActivePlace(panelId);
+      console.log('Accordion panel opened:', panelId);
+    } else {
+      this.previousPanelState = isOpen;
+    }
+  }
+
 }
