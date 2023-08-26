@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import {Place, PlaceRequest } from '../place.model';
 import { latLng, marker, Marker, Map, LeafletMouseEvent, tileLayer } from 'leaflet';
 import { defaultIcon } from '../map/default-marker';
+import { Geolocation } from 'src/app/utils';
 
 @Component({
   selector: 'app-place-form',
@@ -77,7 +78,22 @@ export class PlaceFormComponent implements OnInit {
       ];
       this.mapCenter = [coordinates[0], coordinates[1]];
       map.setView(this.mapCenter, 13);
-    } // Here could add else to center on user location if place is undefine
+    } else {
+      //center map on user location if place is define
+      Geolocation.getCurrentPosition()
+      .then((position) => {
+        this.mapCenter = [position.coords.latitude, position.coords.longitude];
+        map.setView(this.mapCenter, 13);
+      })
+      .catch((error) => {
+        console.error('Error getting geolocation:', error);
+        //default position
+        const fallbackLatitude = 46.778186; 
+        const fallbackLongitude = 6.641524; 
+        this.mapCenter = [fallbackLatitude, fallbackLongitude];
+        map.setView(this.mapCenter, 13);
+      });
+    }
     
   }
   // Add marker on map when clicked
