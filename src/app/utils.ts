@@ -1,3 +1,5 @@
+import { Observable } from "rxjs";
+
 // Retourne une valeur non null définie
 export function isDefined<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
@@ -14,4 +16,17 @@ export const Geolocation = {
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
     });
   },
+  // watchPosition(options: PositionOptions = {}): Observable<GeolocationPosition> {
+  //   return new Observable((subscriber) => {
+  //     if (!hasApi) {
+  //       subscriber.error("The Geolocation API is not available on this browser");
+  //       subscriber.complete();
+  //     }
+  //     navigator.geolocation.watchPosition(
+  //       (position) => subscriber.next(position),
+  //       (error) => subscriber.error(error),
+  //       options
+  //     );
+  //   });
+  // },
 };

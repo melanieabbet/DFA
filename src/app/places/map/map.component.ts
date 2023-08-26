@@ -19,9 +19,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   mapMarkers: Marker[];
   map: Map | undefined;
   @Input() trips?: Trip[]; 
-  selectedTripId: string | null = null; // ID of selected 
+  selectedTripId: string =""; // ID of selected 
   searchText: string = ''; // input text value
   existPlaces: boolean; // to display to the user if no places exist
+  userLocationPermission: boolean = false; //toggle button availability based on user location permission
   constructor(private mapService: MapService, private placeService: PlaceService, private tripService: TripService, private router: Router,private ngZone: NgZone){
     this.mapOptions = {
       layers: [
@@ -36,17 +37,23 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
     this.mapMarkers = [];
     this.existPlaces = false;
   }
-
+ 
   ngOnInit() {
     this.placeService.getCurrentUserPlaces$().subscribe((places: Place[]) => {
       // Transform places into marker
       this.mapMarkers = this.createMarkersWithPopups(places);
-      if (this.mapMarkers){
+      if (this.mapMarkers.length > 0){
         this.existPlaces = true;
       }else{
         this.existPlaces = false;
       }
     });
+    // Check if geolocation permission is granted
+    if ("geolocation" in navigator) {
+      navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
+        this.userLocationPermission = permissionStatus.state === 'granted';
+      });
+    }
   }
     /**
    * Lifecycle hook - To stay tuned when trips list from parent component change
@@ -94,20 +101,25 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
    */
   onMapReady(map: Map) {
     this.map = map;
-    // Get the user location if possible
-    Geolocation.getCurrentPosition()
-      .then((position) => {
-        this.centerMapOnGeolocation(position.coords.latitude, position.coords.longitude);
-      })
-      .catch((error) => {
-        // Use of Location not permitted then default values
-        console.error('Error getting geolocation:', error);
-        const fallbackLatitude = 46.778186; 
-        const fallbackLongitude = 6.641524; 
-        this.centerMapOnGeolocation(fallbackLatitude, fallbackLongitude);
-      });
+    this.centerMapOnUserLocation();
   }
-
+    /**
+   * Function to center map on user location when available
+   */
+  centerMapOnUserLocation() {
+      Geolocation.getCurrentPosition()
+        .then((position) => {
+          this.centerMapOnGeolocation(position.coords.latitude, position.coords.longitude);
+        })
+        .catch((error) => {
+          console.error('Error getting geolocation:', error);
+          //default position
+          const fallbackLatitude = 46.778186; 
+          const fallbackLongitude = 6.641524; 
+          this.centerMapOnGeolocation(fallbackLatitude, fallbackLongitude);
+        });
+  }
+  
   /**
    * Filter marker on input change
    */
@@ -158,7 +170,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   }
   private centerMapOnGeolocation(latitude: number, longitude: number) {
     if (this.map) {
-      this.map.setView([latitude, longitude], 13);
+      this.map.setView([latitude, longitude], 8);
     }
   }
   // Fonction to convert coordinate into LatLng - Leaflet expression

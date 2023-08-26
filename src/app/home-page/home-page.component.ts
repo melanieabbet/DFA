@@ -25,7 +25,7 @@ export class HomePageComponent implements OnInit {
   }
   loadTrips(): void{
     this.tripService.getCurrentUserTrips$()
-    .subscribe((trips) => {this.trips = trips; console.log("MAJ trips: " +this.trips)});
+    .subscribe((trips) => {this.trips = trips;});
   }
 
   openFormModal() {

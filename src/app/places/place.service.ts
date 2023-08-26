@@ -19,7 +19,6 @@ export class PlaceService {
       switchMap((user) => {
         if (user) {
           const userId = user.id;
-          console.log(userId);
           return this.http.get<Place[]>(`${environment.apiUrl}/places?include=trip`).pipe(
             map((places) => places.filter(place => place.trip!.userId == userId))
           );
