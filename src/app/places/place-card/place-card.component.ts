@@ -57,7 +57,7 @@ export class PlaceCardComponent implements OnInit, OnDestroy {
   }
   delete(): void {
     if (isDefined(this.place.id)) {
-      this.placeService.deletePlace(this.place.id).subscribe({
+      this.placeService.deletePlace$(this.place.id).subscribe({
         next: (deletedPlace: Place) => {
           // Suppression réussie, effectuez les actions nécessaires
           console.log('Le lieu a été supprimé :', deletedPlace);

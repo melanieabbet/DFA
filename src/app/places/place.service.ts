@@ -14,7 +14,7 @@ export class PlaceService {
     private authService: AuthService,
   ) { }
 
-  getCurrentUserPlaces(): Observable<Place[]> {
+  getCurrentUserPlaces$(): Observable<Place[]> {
     return this.authService.getUser$().pipe(
       switchMap((user) => {
         if (user) {
@@ -31,7 +31,7 @@ export class PlaceService {
       })
     );
   }
-  getCurrentUserPlacesById(tripId: string): Observable<Place[]> {
+  getCurrentUserPlacesById$(tripId: string): Observable<Place[]> {
     return this.authService.getUser$().pipe(
       switchMap((user) => {
         if (user) {
@@ -44,21 +44,21 @@ export class PlaceService {
       })
     );
   }
-  getThisTripPlaces(tripId: string):  Observable<Place[]>{
+  getThisTripPlaces$(tripId: string):  Observable<Place[]>{
     return this.http.get<Place[]>(`${environment.apiUrl}/places?trip=${tripId}`);
   }
-  postPlace(newPlace: PlaceRequest): Observable<Place> {
+  postPlace$(newPlace: PlaceRequest): Observable<Place> {
     return this.http.post<Place>(`${environment.apiUrl}/places`,newPlace);
   }
-  deletePlace(id: string): Observable<Place> {
+  deletePlace$(id: string): Observable<Place> {
     return this.http.delete<Place>(`${environment.apiUrl}/places/${id}`);
   } 
-  checkPlaceNameExists(placeName: string): Observable<boolean> {
+  checkPlaceNameExists$(placeName: string): Observable<boolean> {
     return this.http.get<Place[]>(`${environment.apiUrl}/places?name=${placeName}`).pipe(
       map((places: Place[]) => places.length > 0)
     );
   }
-  updatePlace(id:string, updatedPlace: PlaceRequest): Observable<Place> {
+  updatePlace$(id:string, updatedPlace: PlaceRequest): Observable<Place> {
     return this.http.patch<Place>(`${environment.apiUrl}/places/${id}`,updatedPlace);
   }
 

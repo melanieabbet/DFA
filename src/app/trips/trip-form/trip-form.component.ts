@@ -41,10 +41,12 @@ export class TripFormComponent implements OnInit {
     }
   }
   onSubmit(){
+    //Send data to NewTripModal to be processes if form info are valid 
     if (this.tripForm.valid) {
       const formData = this.tripForm.value;
       this.submitted.emit(formData);
     } else {
+      //Display message error to corresponding input the user
       this.formError = true;
     }
   }

@@ -91,7 +91,7 @@ export class TripMapComponent implements OnInit, OnDestroy{
    */
   private loadMarkersAndCenter() {
      // get the trip places
-    this.placeService.getThisTripPlaces(this.tripId).subscribe((places: Place[]) => {
+    this.placeService.getThisTripPlaces$(this.tripId).subscribe((places: Place[]) => {
       this.mapMarkers = this.createMarkers(places);
         //center the places on the map if existing
       if (this.mapMarkers.length > 0 && this.map) {

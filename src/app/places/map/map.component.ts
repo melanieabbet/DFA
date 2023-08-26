@@ -38,7 +38,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnInit() {
-    this.placeService.getCurrentUserPlaces().subscribe((places: Place[]) => {
+    this.placeService.getCurrentUserPlaces$().subscribe((places: Place[]) => {
       // Transform places into marker
       this.mapMarkers = this.createMarkersWithPopups(places);
       if (this.mapMarkers){

@@ -16,7 +16,7 @@ export class TripCardComponent implements OnInit {
 
   ngOnInit() {
     // Call the service to retrieve places associated with the trip (by its ID) 
-    this.placeservice.getThisTripPlaces(this.trip.id).subscribe((places: Place[]) => {
+    this.placeservice.getThisTripPlaces$(this.trip.id).subscribe((places: Place[]) => {
       // Use the default image if no image found later
       this.tripImage = 'https://media.istockphoto.com/id/1371796051/fr/vectoriel/fus%C3%A9e-ic%C3%B4ne-avec-une-ombre-longue-sur-fond-vide-flat-design.jpg?s=612x612&w=0&k=20&c=7zpv79eehuXa6ebU6B7bppSTmEjaE1fEJNY3umbPVuM=';
       // Loop through the places to find a valid image

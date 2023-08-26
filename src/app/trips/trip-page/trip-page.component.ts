@@ -1,8 +1,8 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { TripService } from '../trip.service';
 import { Trip } from '../trip.model';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { Place, PlaceRequest } from 'src/app/places/place.model';
+import { Place} from 'src/app/places/place.model';
 import { PlaceService } from 'src/app/places/place.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { filter, first, forkJoin } from 'rxjs';
@@ -44,8 +44,8 @@ export class TripPageComponent {
 
       // Execute if all observable are completed
       forkJoin([
-        this.tripService.getTrip(this.tripId),
-        this.placeService.getThisTripPlaces(this.tripId),
+        this.tripService.getTrip$(this.tripId),
+        this.placeService.getThisTripPlaces$(this.tripId),
         // Tricks to complete an observable that normally never end
         this.auth.getUser$().pipe(
           // Say to typescript that user is define
@@ -66,14 +66,12 @@ export class TripPageComponent {
 
   showEditModal(): void {
       if (isDefined(this.trip)) {
-        console.log("Trip Page: "+this.trip);
         this.formModal = this.bsModalService.show(EditTripModalComponent, {
           initialState: {tripData: this.trip , tripId: this.tripId },
         });
         if (this.formModal) {
           this.formModal.onHidden.subscribe(() => {
             this.loadTrip();
-            console.log("MAJ")
           });
         }
       }
@@ -82,11 +80,10 @@ export class TripPageComponent {
     if (isDefined(this.tripId)) {
       this.tripService.deleteTrip(this.tripId).subscribe({
         next: (deletedTrip: Trip) => {
-          // Suppression réussie, effectuez les actions nécessaires
+          //Deleted with success now do the necessary action
           console.log('Le voyage a été supprimé :', deletedTrip);
-          // Redirigez l'utilisateur vers une autre page
+          // Redirect user to home page
           this.router.navigate(['/home']);
-          // ou mettez à jour la liste des voyages dans votre composant parent
         }, error: () => { alert('Une erreur s\'est produite lors de la suppression du voyage :');}
       }
       );
@@ -94,28 +91,32 @@ export class TripPageComponent {
   }
   loadTrip(): void{
     if(this.tripId){
-      this.tripService.getTrip(this.tripId).subscribe((trip) => {this.trip = trip;});
+      this.tripService.getTrip$(this.tripId).subscribe((trip) => {this.trip = trip;});
     };
   }
   loadPlace(): void{
     if(this.tripId){
-      this.placeService.getThisTripPlaces(this.tripId).subscribe((places)=> {this.places = places;})
+      this.placeService.getThisTripPlaces$(this.tripId).subscribe((places)=> {this.places = places;})
     };
   }
+  /**
+   * Called to open new place modal & form
+   */
   showAddPlaceModal(): void {
     this.formModal = this.bsModalService.show(NewPlaceModalComponent, {
+      // Create a place within actual trip
       initialState: { tripId: this.tripId },
     });
     if (this.formModal) {
       this.formModal.onHidden.subscribe(() => {
+        // refresh the view once place was correctly created (mean when modal is hidden)
         this.loadPlace();
-        console.log("MAJ")
       });
     }
   }
-  // Fonction appelée lorsque le lieu est supprimé depuis le PlaceCardComponent
+  //Call if delete place is call from PlaceCardComponent in order to update the listed places
   onPlaceDeleted(placeId: string): void {
-    // Mettez à jour la liste des lieux en filtrant le lieu supprimé
+    // Update place with a filter
     this.places = this.places?.filter(place => place.id !== placeId);
   }
 }

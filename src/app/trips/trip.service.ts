@@ -15,11 +15,11 @@ export class TripService {
   ) { }
 
 
-  getTrips():  Observable<Trip[]>{
+  getTrips$():  Observable<Trip[]>{
     return this.http.get<Trip[]>(`${environment.apiUrl}/trips`);
   }
 
-  getCurrentUserTrips(): Observable<Trip[]> {
+  getCurrentUserTrips$(): Observable<Trip[]> {
     return this.authService.getUser$().pipe(
       switchMap((user) => {
         if (user) {
@@ -33,15 +33,15 @@ export class TripService {
     );
   }
 
-  getTrip(id: string): Observable<Trip> {
+  getTrip$(id: string): Observable<Trip> {
     return this.http.get<Trip>(`${environment.apiUrl}/trips/${id}`);
   }
 
-  postTrip(newTrip: TripRequest): Observable<Trip[]> {
+  postTrip$(newTrip: TripRequest): Observable<Trip[]> {
     return this.http.post<Trip[]>(`${environment.apiUrl}/trips`,newTrip);
   }
 
-  checkTripNameExists(tripTitle: string): Observable<boolean> {
+  checkTripNameExists$(tripTitle: string): Observable<boolean> {
     return this.http.get<Trip[]>(`${environment.apiUrl}/trips?title=${tripTitle}`).pipe(
       map((trips: Trip[]) => trips.length > 0)
     );
@@ -51,7 +51,7 @@ export class TripService {
     return this.http.delete<Trip>(`${environment.apiUrl}/trips/${id}`);
   }
 
-  updateTrip(id:string, updatedTrip: TripRequest): Observable<Trip[]> {
+  updateTrip$(id:string, updatedTrip: TripRequest): Observable<Trip[]> {
     return this.http.patch<Trip[]>(`${environment.apiUrl}/trips/${id}`,updatedTrip);
   }
 

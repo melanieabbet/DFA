@@ -18,11 +18,11 @@ export class PlaceFormComponent implements OnInit {
   @Input() placeData!: Place;
   @Output() submitted = new EventEmitter<PlaceRequest>();
 
-  // Propriétés pour la carte
+  // map proprieties
   mapOptions: L.MapOptions;
   mapMarkers: Marker[] = [];
   selectedLocation: [number, number] | null = null;
-  mapCenter: [number, number] = [46.778186, 6.641524];
+  mapCenter: [number, number] = [46.778186, 6.641524]; // default value to center the map
 
   constructor(
     readonly modalRef: BsModalRef,
@@ -64,8 +64,7 @@ export class PlaceFormComponent implements OnInit {
     }
   }
   onMapReady(map: Map){
-    //centrer ici sur la localisation de l'user
-    //Debug map
+    //center map on place if place is define
     setTimeout(() => map.invalidateSize(), 0);
     if (this.placeData){
       const coordinates = this.placeData.location.coordinates;
@@ -78,10 +77,10 @@ export class PlaceFormComponent implements OnInit {
       ];
       this.mapCenter = [coordinates[0], coordinates[1]];
       map.setView(this.mapCenter, 13);
-    }
+    } // Here could add else to center on user location if place is undefine
     
   }
-  // Fonction pour ajouter un marqueur sur la carte au clic
+  // Add marker on map when clicked
   onMapClick(event: LeafletMouseEvent) {
     const lat = event.latlng.lat;
     const lng = event.latlng.lng;

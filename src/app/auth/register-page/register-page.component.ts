@@ -56,7 +56,7 @@ export class RegisterPageComponent {
       switchMap((exists: boolean) => {
         if (exists) {
           // Not available: Error
-          this.errorMessage = "Cet utilisateur existe déjà, choisi un autre nom";
+          this.errorMessage = "Cet utilisateur existe déjà, choisis un autre nom";
           return throwError(() => new Error("Cet utilisateur existe déjà"));
         } else {
           // 2: If available - Create user

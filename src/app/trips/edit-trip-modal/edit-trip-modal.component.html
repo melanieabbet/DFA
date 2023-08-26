@@ -11,6 +11,9 @@
   <div class="modal-body">
     <app-trip-form #tripForm [tripData]="tripData" [tripId]="tripId" (submitted)="editNewTrip($event)"></app-trip-form>
   </div>
+  <div *ngIf="editTripError" class="col-12 d-flex justify-content-center">
+    <p class="bg-danger text-light text-center py-2 px-5">{{ errorMessage }}</p>
+  </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">
       Annuler

@@ -11,6 +11,9 @@
   <div class="modal-body">
     <app-place-form #placeForm (submitted)="createNewPlace($event)"></app-place-form>
   </div>
+  <div *ngIf="addPlaceError" class="col-12 d-flex justify-content-center">
+    <p class="bg-danger text-light text-center py-2 px-5">{{ errorMessage }}</p>
+  </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">
       Annuler

@@ -1,5 +1,5 @@
 <form [formGroup]="tripForm">
-  <div class="mb-3">
+  <div class="mb-4">
     <label for="tripname" class="form-label required">Nom du voyage</label>
     <input
       type="text"
@@ -12,7 +12,7 @@
       class="position-absolute small m-1 text-danger"
       *ngIf="tripForm.get('title')?.invalid && (tripForm.get('title')?.touched)"
     >
-      Un nom de minimum 3 charactères est obligatoire
+      Minimum 3 charactères 
     </p>
   </div>
   <div class="mb-3">
@@ -28,7 +28,7 @@
       class="position-absolute small m-1 text-danger"
       *ngIf="tripForm.get('description')?.invalid && (tripForm.get('description')?.touched)"
     >
-      Une description de minimum 5 charactères est obligatoire
+    Minimum 5 charactères
     </p>
   </div>
 </form>

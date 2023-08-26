@@ -12,7 +12,7 @@ export class InspiPageComponent {
   filteredTrips?: Trip[];
 
   constructor(private tripService: TripService) {
-    this.tripService.getTrips().subscribe(trips => {
+    this.tripService.getTrips$().subscribe(trips => {
       this.trips = trips;
       this.filteredTrips = trips; // Initialize filteredTrips with all trips at the beginning
     });
