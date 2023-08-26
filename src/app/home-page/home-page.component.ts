@@ -10,8 +10,8 @@ import { NewTripModalComponent } from '../trips/new-trip-modal/new-trip-modal.co
   styleUrls: ['./home-page.component.scss'],
 })
 export class HomePageComponent implements OnInit {
- // formModal?: BsModalRef;
- //ici soucis undefine avec onHidden. autre solutions any ?
+
+ //ici soucis undefine avec onHidden. autre solutions que any ?
   formModal: any;
   trips?: Trip[];
 
@@ -24,7 +24,7 @@ export class HomePageComponent implements OnInit {
     this.loadTrips();
   }
   loadTrips(): void{
-    this.tripService.getCurrentUserTrips()
+    this.tripService.getCurrentUserTrips$()
     .subscribe((trips) => {this.trips = trips; console.log("MAJ trips: " +this.trips)});
   }
 
