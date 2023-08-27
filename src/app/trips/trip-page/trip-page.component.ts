@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { EditTripModalComponent } from '../edit-trip-modal/edit-trip-modal.component';
 import { NewPlaceModalComponent } from 'src/app/places/new-place-modal/new-place-modal.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-trip-page',
@@ -26,6 +27,8 @@ export class TripPageComponent {
   @Input({ required: true }) trip?: Trip;
   formModal: any;
   oneAtATime = true;
+  deleteTripError = false;
+  errorMessage = "Une erreur s'est produite lors de la tentative de suppression du voyage";
 
   constructor(
     private route: ActivatedRoute,
@@ -81,14 +84,55 @@ export class TripPageComponent {
       this.tripService.deleteTrip(this.tripId).subscribe({
         next: (deletedTrip: Trip) => {
           //Deleted with success now do the necessary action
-          console.log('Le voyage a été supprimé :', deletedTrip);
           // Redirect user to home page
           this.router.navigate(['/home']);
-        }, error: () => { alert('Une erreur s\'est produite lors de la suppression du voyage :');}
+        }, error: (err) => {
+           // Initialize Error message (http response) and display to user
+           if(err instanceof HttpErrorResponse && err.status === 401){
+            const errorCode = err.error.code; // Error code send from the API
+            switch (errorCode) {
+              case 'authHeaderMissing':
+                // 401 Unauthorized - This resource requires authentication
+                this.errorMessage = "Seuls les utilisateur connectés peuvent supprimer des voyages";
+                break;
+              case 'authHeaderMalformed':
+                // 401 authHeaderMalformed - Your Authorization header is not in the correct format.
+                this.errorMessage = "Problème d'authentification - reconnexion nécessaire";
+                break;
+              case 'authTokenExpired':
+                // 401 authTokenExpired -  The token you sent in the Authorization header was valid but has expired
+                this.errorMessage = "Session expirée - reconnexion nécessaire";
+                break;
+              case 'authTokenInvalid':
+                //401 Unauthorized - The token you sent in the Authorization header is invalid
+                this.errorMessage = "Problème d'authentification - reconnexion nécessaire";
+                break;
+              default:
+                // default
+                this.errorMessage = "Une erreur s'est produite lors de la tentative de suppression du voyage du voyage.";
+            }
+          }else if (err instanceof HttpErrorResponse && err.status === 403){
+            // 403 forbidden
+            this.errorMessage = "Vous ne possédez pas les droits de suppression sur ce voyage";
+          }else{
+            // default
+            this.errorMessage = "Une erreur s'est produite lors de la tentative de suppression";
+          }
+          this.deleteTripError = true;
+          console.warn(`Delete trip failed: ${err.message}`);
+          }
       }
       );
     }
   }
+  //User confirmation to delete
+  confirmDelete(): void {
+    const result = confirm('Êtes-vous sûr de vouloir supprimer ce voyage ? Tous les lieux affiliés au voyage seront supprimé également.');
+    if (result) {
+      this.delete();
+    }
+  }
+  
   loadTrip(): void{
     if(this.tripId){
       this.tripService.getTrip$(this.tripId).subscribe((trip) => {this.trip = trip;});

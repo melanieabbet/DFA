@@ -79,7 +79,7 @@ export class PlaceFormComponent implements OnInit {
       this.mapCenter = [coordinates[0], coordinates[1]];
       map.setView(this.mapCenter, 13);
     } else {
-      //center map on user location if place is define
+      //center map on user location if place is not  define
       Geolocation.getCurrentPosition()
       .then((position) => {
         this.mapCenter = [position.coords.latitude, position.coords.longitude];
@@ -87,7 +87,7 @@ export class PlaceFormComponent implements OnInit {
       })
       .catch((error) => {
         console.error('Error getting geolocation:', error);
-        //default position
+        //default position if user location not used
         const fallbackLatitude = 46.778186; 
         const fallbackLongitude = 6.641524; 
         this.mapCenter = [fallbackLatitude, fallbackLongitude];

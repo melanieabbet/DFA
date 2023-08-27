@@ -48,7 +48,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnChanges {
         this.existPlaces = false;
       }
     });
-    // Check if geolocation permission is granted
+    // Check if geolocation permission is granted for button sate
     if ("geolocation" in navigator) {
       navigator.permissions.query({ name: 'geolocation' }).then(permissionStatus => {
         this.userLocationPermission = permissionStatus.state === 'granted';
