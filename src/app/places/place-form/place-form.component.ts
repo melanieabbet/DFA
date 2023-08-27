@@ -115,6 +115,10 @@ export class PlaceFormComponent implements OnInit {
         type: 'Point',
         coordinates: this.selectedLocation,
       };
+      //to avoid serveur error when user begin to write something and then delete it
+      if (formData.pictureUrl ==""){
+        formData.pictureUrl = null;
+      }
       this.submitted.emit(formData);
     } else {
       this.formError = true;
