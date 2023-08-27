@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TripService } from '../trip.service';
+import { UserApiService } from 'src/app/users/user.service';
 import { Trip } from '../trip.model';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Place} from 'src/app/places/place.model';
@@ -23,17 +24,19 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class TripPageComponent {
   tripId?: string;
   places?: Place[];
+  userName ="";
   tripOwnedByUser = false;
   @Input({ required: true }) trip?: Trip;
   formModal: any;
   oneAtATime = true;
   deleteTripError = false;
   errorMessage = "Une erreur s'est produite lors de la tentative de suppression du voyage";
-
+  tripExist=true;
   constructor(
     private route: ActivatedRoute,
     private tripService: TripService,
     private placeService: PlaceService,
+    private userApiService : UserApiService,
     private auth: AuthService,
     private datePipe: DatePipe,
     private router: Router,
@@ -55,13 +58,25 @@ export class TripPageComponent {
           filter(isDefined),
           first()
         ),
-      ]).subscribe(([trip, places, user]) => {
-        this.trip = trip;
-        this.places = places;
-        this.tripOwnedByUser = user.id === trip.userId;
+       
+      ]).subscribe({
+        next: ([trip, places, user]) =>{
+          this.trip = trip;
+          this.places = places;
+          this.tripOwnedByUser = user.id === trip.userId;
+          // Get the userName using the retrieved trip's userId
+          this.userApiService.getUserName$(trip.userId).subscribe((userName) => {this.userName = userName;});
+        }, error: (err) =>{
+          if(err instanceof HttpErrorResponse && err.status === 404){
+            this.tripExist =false;
+          }
+          console.warn(`Charge trippage failed: ${err.message}`);
+        }
       });
     });
+
   }
+
   formatDate(date: string): string {
     const dateObj = new Date(date);
     return this.datePipe.transform(dateObj, 'yyyy-MM-dd') || '';

@@ -7,11 +7,14 @@
             </ng-template>
         </div>
         <div class="col-8">
+            <div *ngIf="deletePlaceError" class="d-flex justify-content-center">
+                <p class="bg-danger text-light text-center py-2 px-5">{{ errorMessage }}</p>
+            </div>
             <p>{{place.description}}</p>
             <p>{{place.location.coordinates[0]}},{{place.location.coordinates[1]}}</p>
             <div *ngIf="tripOwnedByUser" class="d-flex">
                 <button type="button" class="btn btn-primary  ms-3" (click)="showEditModal()">Editer</button>
-                <button type="button" class="btn btn-primary  ms-3" (click)="delete()">Supprimer</button>
+                <button type="button" class="btn btn-primary  ms-3" (click)="confirmDelete()">Supprimer</button>
             </div>
         </div>
     </div>

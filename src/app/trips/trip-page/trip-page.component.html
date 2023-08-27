@@ -14,7 +14,7 @@
         <ul class="col-12 d-flex justify-content-center" style="list-style:none;">
             <li class="mx-3"><i class="bi bi-calendar me-2 text-primary"></i><span class="fw-bold">{{ formatDate(trip.createdAt) }}</span></li>
             <li class="mx-3"><i class="bi bi-geo-alt-fill me-2 text-primary"></i><span class="fw-bold">{{ trip.placesCount }}</span></li>
-            <li class="mx-3"><i class="bi bi-person-fill me-2 text-primary"></i><span  class="fw-bold">{{ trip.userId }}</span></li>
+            <li class="mx-3"><i class="bi bi-person-fill me-2 text-primary"></i><span  class="fw-bold">{{ userName }}</span></li>
         </ul>
         <p class="col-12 text-center my-3">{{ trip.description }}</p>
     </div>
@@ -32,7 +32,7 @@
         </div>
     </div>
 </div>
-<div *ngIf="!trip" class="container-fluid bg-white" style="margin-top: 120px;">
+<div *ngIf="!tripExist" class="container-fluid bg-white" style="margin-top: 120px;">
     <div class="row">
         <div class="col-12 d-flex flex-column justify-content-center align-items-center">
             <h1 class="text-center my-5 display-5 fw-bold" >Oups, ce voyage n'est plus disponible.</h1>
@@ -40,5 +40,5 @@
         </div>
     </div>
 </div>
-
+<app-footer></app-footer>
 

@@ -66,7 +66,13 @@ export class AccountPageComponent implements OnInit {
     const dateObj = new Date(date);
     return this.datePipe.transform(dateObj, 'yyyy-MM-dd') || '';
   }
-
+ //User confirmation to delete
+ confirmDelete(): void {
+  const result = confirm('Êtes-vous sûr de vouloir supprimer ce compte ? Tous les lieux et voyages affiliés au compte seront supprimé.');
+  if (result) {
+    this.delete();
+  }
+}
   /**
    * 1. Delete the current user
    * 2. Reset authentication to null with logout

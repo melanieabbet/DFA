@@ -28,6 +28,7 @@ import { MapPopupComponent } from './places/map-popup/map-popup.component';
 import { EditPlaceModalComponent } from './places/edit-place-modal/edit-place-modal.component';
 import { AccountPageComponent } from './users/account-page/account-page.component';
 import { TripMapComponent } from './places/map/trip-map.component';
+import { FooterComponent } from './layout/footer/footer.component';
 
 
 
@@ -51,7 +52,8 @@ import { TripMapComponent } from './places/map/trip-map.component';
     TripMapComponent,
     MapPopupComponent,
     EditPlaceModalComponent,
-    AccountPageComponent
+    AccountPageComponent,
+    FooterComponent
   ],
   imports: [
     FormsModule,

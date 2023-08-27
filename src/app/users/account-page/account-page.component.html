@@ -4,7 +4,7 @@
         <div class="d-flex col-12 align-items-center justify-content-center" style="margin-top: -100px;">
             <h1 class="text-center my-5 display-3 fw-bold" >Mon Compte</h1>
             <div *ngIf="user && !isEditMode" class="d-flex">
-                <button type="button" class="btn btn-primary  ms-3" (click)="delete()">Supprimer</button>
+                <button type="button" class="btn btn-primary  ms-3" (click)="confirmDelete()">Supprimer</button>
                 <button type="button" class="btn btn-primary ms-3" (click)="enableEditMode()">Editer</button>
             </div>
 
@@ -69,4 +69,4 @@
         </div>
     </div>
 </div>
-
+<app-footer></app-footer>
