@@ -1,27 +1,39 @@
 # Travely
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.4.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.4. for the DFA course with Mathias Oberson (HE-ARC | MAS-RAD | CAS-DAF)
 
-## Development server
+## The app
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Travely is a web application that allows users to plan trips or find inspiration for future travel. Users can also find inspiration for their next trip and places to visit. 
 
-## Code scaffolding
+## The fonctionality
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Login / Register:
 
-## Build
+The application is not accessible to users without an account.
+On the starting page, users can log in directly or create an account. They are then redirected to the home page, which corresponds to their travel space.
+On the application, users have access to an "account" area where they can delete their account or change their password and/or account name.
+(Each user has a unique identifier).
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Home page:
 
-## Running unit tests
+On the Main page the user has access to all these trips and can create new trips. They can also have an overview on a map of all the places they have saved, filter them by trip or carry out a keyword search.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+By default, the map is centred on the user's position, provided that the user accepts the use of their geolocation. If necessary, they can also use a button to recentre the map on their position. If the user refuses to allow his geolocation data to be used, the map will be centred on the first location saved or on a default location. The button is then deactivated.
 
-## Running end-to-end tests
+When you click on one of the markers on the map, information about a location is displayed, along with a link to the trip page of the location (Coming from the map, the location will be displayed in details).
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+By clicking on one of the journeys, the user is redirected to the journey's page and access to the different locations within it (coming from the Trip card now location are showen in details).
 
-## Further help
+### Trip page:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+On the Trip page the user has access, to the trip details (name, description, creation date, user of the trip and description). As well as to the register places.
+If the user is authentificated and if the trip belong to him/her, the user has the possibility to modify the trip information (name and description) and create or modify existing places.
+Trip element are related to trip Marker on a map. On the click of each one of them (marker or element) the corresponding element is "activated".
+Once an element is "activated" its details are shown.
+If the user is authentificated he can modify or delete a place.
+
+### Inspiration Page
+
+On this page the user can find inspiration from other users (all trips existing are showns).
+
