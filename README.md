@@ -8,6 +8,8 @@ Travely is a web application that allows users to plan trips or find inspiration
 
 ## The fonctionality
 
+See Travely-Flow.jpg to get an overview of how to navigate the app
+
 ### Login / Register:
 
 The application is not accessible to users without an account.
