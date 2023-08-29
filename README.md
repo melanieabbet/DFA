@@ -37,3 +37,9 @@ If the user is authentificated he can modify or delete a place.
 
 On this page the user can find inspiration from other users (all trips existing are showns).
 
+## Main challenges
+
+For me one of the main challenge was to understand how to make connection between component. 
+For example one specifics challenge was form to create different component(Modal) to edit and create Place or Trip while stille using the same form. I figured how to use correctly @input and @output EventEmitter to transfer data from the form to the modal and later to the page component.
+For the other connection/update of element I mainly used observable.
+The second diffculty for me is i struggle a bit to understand how i should organise my elements and when divided things into different services and component. For exemple in my app the map component is so closely related to the place component that perhaps I could find a better way to organize them.
