@@ -6,7 +6,7 @@ import { isDefined } from 'src/app/utils';
 import { Router } from '@angular/router';
 import { UserUpdateRequest } from 'src/app/users/user-request.model';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { AuthRequest } from 'src/app/auth/auth-request.model';
 
@@ -99,6 +99,8 @@ export class AccountPageComponent implements OnInit {
    */
   enableEditMode() {
     this.isEditMode = true;
+    this.actionError = false;
+    this.actionSuccess =false;
     if (this.user){
         // Store the original name and set password to undefine
         // We replace dummy value so we don't send wrong data when change are saved
@@ -137,7 +139,7 @@ export class AccountPageComponent implements OnInit {
           if (exists) {
             this.errorMessage = 'Cet utilisateur existe déjà, choisi un autre nom';
             this.actionError = true;
-            return of(null);// return null to complete observable
+            return throwError(() => new Error("Cet utilisateur existe déjà"));
           } else {
             console.log("le nom est dispo");
             // 2: Update user if the new name is available
@@ -161,11 +163,11 @@ export class AccountPageComponent implements OnInit {
             const userRefresh: AuthRequest = {username:this.userUpdateRequest.name,password:this.userUpdateRequest!.password };
             // 4: Disable edit mode
             this.isEditMode = false; // Disable edit mode here, after the update operation is completed
+            this.actionError =false;
             //3: Update Authentication
             return this.authService.login$(userRefresh).pipe(
               catchError((err) => {
                 console.warn(`Authentication failed after update: ${err.message}`);
-                // Handle the observable login$() error separately if needed.
                 return of(null); // Null or subscribe to observable login$()
               })
             );
@@ -230,6 +232,7 @@ export class AccountPageComponent implements OnInit {
    */
   cancelEdit() {
     this.isEditMode = false;
+    this.actionError = false;
     if (this.user){
       // Restore the original name and password (dummy value) if editing is canceled
       this.userUpdateRequest.name = this.user.name;
